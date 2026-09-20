@@ -23,7 +23,7 @@ Dampak dari Bandwith is infinite cukup banyak, berikut adalah beberapa dampak ya
 
 3. Membatasi ukuran file *(Rate Limiting)*. Sebelum melakukan pengunggahan, periksa ukuran file, misalnya max 2 MB, jika file melebihi batas yang ditentukan, maka akan ditolak sebelum mengunduh/mengunggah data. Selain itu gunakan juga rate limiter (misalnya 100 request per menit untuk setiap IP) untuk mencegah pembengkakan bandwith/scripting (DdoS)
 
-4. Melakukan Query secara *"batch"*, lakukan *pagination* agar server tidak mengirim ribuan data secara sekaligus. ketika harus mengambil data sekaligus, gunakan batch agar server tidak perlu menerima banyak Request (misalnya : GET /api/user?ids =1,2,3) dibandingkan GET /api/users/1 GET /api/users/1 dan seterusnya.
+4. Melakukan Query secara *"batch"*, lakukan *pagination* agar server tidak mengirim ribuan data secara sekaligus. ketika harus mengambil data sekaligus, gunakan batch agar server tidak perlu menerima banyak Request (misalnya : `GET /api/user?ids =1,2,3`) dibandingkan GET `/api/users/1 GET /api/users/1` dan seterusnya.
 
 Secara singkat, Solusi desain awal yang direkomendasikan adalah : 
 1. Gunakan fitur Autosave di lokal browser, mengirim data ketika submit
@@ -42,6 +42,7 @@ Secara singkat, Solusi desain awal yang direkomendasikan adalah :
 4. **Beban Komputasi Berpindah ke Pengguna**
    - Memprosess/mengelola data besar sebelum dikirim memang menghemat jaringan, namun boros untuk sumber daya CPU. Pengguna yang menggunakan Smartphone/Device dengan spesifikasi rendah, program tersebut dapat membuat aplikasi terasa lambat atau membuat baterai lebih boros
   
-5. Fleksibilitas Pengguna
+5. **Fleksibilitas Pengguna**
+   - Membatasi ukuran file sebelum di upload dapat mengurangi fleksibiltas dan pengalaman pengguna, karena file perlu disederhanakan secara mandiri terlebih dahulu.
 
 ---
