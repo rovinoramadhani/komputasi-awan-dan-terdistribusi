@@ -21,16 +21,9 @@ Dampak dari Bandwith is infinite cukup banyak, berikut adalah beberapa dampak ya
 
 2. Dilakukannya browser caching untuk assets statis, hal ini akan meringankan server karna hanya perlu mengirimkan sekali packet.
 
-3. Membatasi ukuran file *(Rate Limiting)*. Sebelum melakukan pengunggahan, periksa ukuran file, misalnya max 2 MB, jika file melebihi batas yang ditentukan, maka akan ditolak sebelum mengunduh/mengunggah data. Selain itu gunakan juga rate limiter (misalnya 100 request per menit untuk setiap IP) untuk mencegah pembengkakan bandwith/scripting (DdoS)
+3. Membatasi ukuran file *(Rate Limiting)*. Sebelum melakukan upload, periksa ukuran file, misalnya max 2 MB, jika file melebihi batas yang ditentukan, maka file akan ditolak sebelum mengunggah data. Selain itu gunakan juga rate limiter (misalnya 100 request per menit untuk setiap IP) untuk mencegah pembengkakan bandwith/scripting (DdoS)
 
 4. Melakukan Query secara *"batch"*, lakukan *pagination* agar server tidak mengirim ribuan data secara sekaligus. ketika harus mengambil data sekaligus, gunakan batch agar server tidak perlu menerima banyak Request (misalnya : `GET /api/user?ids =1,2,3`) dibandingkan GET `/api/users/1 GET /api/users/1` dan seterusnya.
-
-Secara singkat, Solusi desain awal yang direkomendasikan adalah : 
-1. Gunakan fitur Autosave di lokal browser, mengirim data ketika submit
-2. Gunakan browser Cache untuk assetes statis
-3. Membatasi ukuran file dan request per orang/IP
-4. Mengirim Query secara Batch
-
 
 ### **Trade-off:** Berdasarkan solusi yang ditawarkan, terdapat beberapa trade off, diantaranya adalah : 
 1. **Kompleksitas Kode dan Arsitektur**
