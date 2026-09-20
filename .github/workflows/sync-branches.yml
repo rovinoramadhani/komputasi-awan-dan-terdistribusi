@@ -1,0 +1,52 @@
+name: Sync Branches
+
+on:
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows:
+      - Build README
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: >-
+      github.event_name == 'push' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        branch:
+          - Rovino-Ramadhani
+          - Galang-Herjuno-Mulya
+          - Erastus-Liubeta-Septian
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.ACTION_DEPLOY_KEY }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync main into branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH="${{ matrix.branch }}"
+
+          git fetch origin main "$BRANCH"
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+          git merge origin/main --no-edit
+          git push origin "$BRANCH"

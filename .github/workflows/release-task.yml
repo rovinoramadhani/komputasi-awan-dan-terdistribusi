@@ -1,0 +1,46 @@
+name: Release Task
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Nomor tugas, contoh: 01"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          ssh-key: ${{ secrets.ACTION_DEPLOY_KEY }}
+
+      - name: Create tag and release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TASK: ${{ inputs.task }}
+        run: |
+          set -euo pipefail
+
+          TAG="tugas-${TASK}-submit"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG sudah ada."
+            exit 1
+          fi
+
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --generate-notes
