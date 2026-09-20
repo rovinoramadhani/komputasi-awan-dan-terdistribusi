@@ -24,7 +24,6 @@ jobs:
       fail-fast: false
       matrix:
         branch:
-          - Rovino-Ramadhani
           - Galang-Herjuno-Mulya
           - Erastus-Liubeta-Septian
 
