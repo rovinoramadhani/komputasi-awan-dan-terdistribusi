@@ -6,7 +6,7 @@
 3. Saat trafik naik, satu server yang menangani semua modul (pesanan, pembayaran, notifikasi kurir) kewalahan karena semuanya berjalan di satu proses monolitik yang sama.
 
 
-**Kenapa ini keliru:** [penjelasan]
+**Kenapa ini keliru:** Bandwith adalah besaran yang memiliki batas, jika developer berpikir jika bandwith adalah infinite, maka bisa saja tidak ada request limit, sehingga membanjiri queue sehingga dapat menyebabkan congestion collapse
 
 **Dampak ke FoodGo:** Server backend kerap crash total dan perlu di-restart manual.
 
