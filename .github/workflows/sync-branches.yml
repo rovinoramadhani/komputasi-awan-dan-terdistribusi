@@ -26,7 +26,7 @@ jobs:
         branch:
           - Galang-Herjuno-Mulya
           - Erastus-Liubeta-Septian
-
+          - Rovino-Ramadhani
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
