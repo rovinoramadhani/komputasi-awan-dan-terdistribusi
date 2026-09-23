@@ -6,5 +6,4 @@ Solusi yang diusulkan mencakup pemisahan service berdasarkan fungsi, penerapan *
 
 Dengan demikian, pengembangan FoodGo sebaiknya dilakukan secara bertahap sesuai kebutuhan dan pertumbuhan trafik, bukan langsung menerapkan seluruh teknologi sekaligus.
 
-
 [Ringkasan: jika FoodGo memperbaiki ketiga pitfall ini, apa arsitektur yang disarankan secara garis besar? Kaitkan dengan Tugas 2.]
