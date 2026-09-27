@@ -1,4 +1,4 @@
-## Pitfall 1: Single Point of Failure — ditulis oleh Rovino Ramadhani
+## Pitfall: Single Point of Failure - ditulis oleh Rovino Ramadhani
 
 **Bukti di Skenario:** Skenario menyebutkan bahwa pesanan, pembayaran, dan notifikasi kurir berjalan pada satu server dan satu proses monolitik yang sama. Ketika backend crash, server harus direstart secara manual.
 
@@ -21,7 +21,7 @@ Service seperti Order, Authentication, dan Payment tetap dapat menggunakan pola 
 
 ---
 
-## Pitfall 2: Ketergantungan pada Vertical Scaling — ditulis oleh Rovino Ramadhani
+## Pitfall : Ketergantungan pada Vertical Scaling - ditulis oleh Rovino Ramadhani
 
 **Bukti di Skenario:** Skenario tidak menyatakan secara eksplisit bahwa FoodGo telah melakukan *vertical scaling*. Namun, karena seluruh aplikasi berada pada satu server, arsitektur tersebut membuat pilihan scaling terbatas dan mendorong penggunaan vertical scaling.
 
@@ -35,7 +35,7 @@ Service seperti Order, Authentication, dan Payment tetap dapat menggunakan pola 
 
 ---
 
-## Pitfall 3: Tight Coupling dan Terlalu Banyak Proses Synchronous — ditulis oleh Rovino Ramadhani
+## Pitfall : Tight Coupling dan Terlalu Banyak Proses Synchronous - ditulis oleh Rovino Ramadhani
 
 **Bukti di Skenario:** Order memanggil Payment kemudian menunggu respons. Selain itu, Order, Payment, dan Notification berada pada satu proses aplikasi. Kondisi ini membuat komponen memiliki keterikatan yang tinggi.
 
@@ -49,7 +49,7 @@ Service seperti Order, Authentication, dan Payment tetap dapat menggunakan pola 
 
 ---
 
-## Masalah Desain 4: Desain Database saat Horizontal Scaling — ditulis oleh Rovino Ramadhani
+## Masalah Desain : Desain Database saat Horizontal Scaling - ditulis oleh Rovino Ramadhani
 
 **Bukti di Skenario:** Bagian database tidak dijelaskan secara langsung dalam skenario sehingga masalah ini tidak dapat dibuktikan sebagai pitfall dari teks kasus. Namun, ketika FoodGo mulai menggunakan horizontal scaling, database dapat menjadi bottleneck berikutnya.
 
@@ -63,7 +63,7 @@ Service seperti Order, Authentication, dan Payment tetap dapat menggunakan pola 
 
 ---
 
-## Masalah Desain 5: Data yang Sering Diakses Membebani Database Utama — ditulis oleh Rovino Ramadhani
+## Masalah Desain : Data yang Sering Diakses Membebani Database Utama - ditulis oleh Rovino Ramadhani
 
 **Bukti di Skenario:** Penggunaan cache atau pola akses database tidak dijelaskan secara langsung dalam skenario sehingga masalah ini bukan pitfall yang dapat dibuktikan dari teks kasus. Bagian ini merupakan pertimbangan desain ketika jumlah request FoodGo meningkat.
 

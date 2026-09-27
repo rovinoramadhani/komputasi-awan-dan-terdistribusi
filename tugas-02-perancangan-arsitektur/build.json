@@ -1,0 +1,9 @@
+{
+  "soal_md": true,
+  "build": [
+    "susunan/header.md",
+    "susunan/1-gaya-arsitektur.md",
+    "susunan/2-diagram.md",
+    "susunan/footer.md"
+  ]
+}

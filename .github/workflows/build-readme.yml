@@ -5,7 +5,8 @@ on:
     branches:
       - main
     paths:
-      - "tugas-*/susunan/**"
+      - "**/build.json"
+      - "**/*.md"
   workflow_dispatch:
 
 permissions:
@@ -26,65 +27,44 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           shopt -s nullglob
 
-          for dir in tugas-*/; do
-            susunan="${dir}susunan"
-            header="${susunan}/header.md"
-            anggota="${susunan}/anggota"
-            footer="${susunan}/footer.md"
-            readme="${dir}README.md"
-            soal="${dir}SOAL.md"
+          find . -type f -name "build.json" | while read config_file; do
+            dir=$(dirname "$config_file")
+          
+            soal_md=$(jq -r '.soal_md' "$config_file")
+            readme="${dir}/README.md"
+            soal="${dir}/SOAL.md"
 
-            if [ ! -d "$susunan" ]; then
-              continue
-            fi
-
-            if [ ! -f "$header" ] || [ ! -f "$footer" ]; then
-              echo "Skip $dir: header.md atau footer.md belum ada."
-              continue
-            fi
-
-            if [ ! -f "$soal" ] && [ -f "$readme" ]; then
+            if [ "$soal_md" = "true" ] && [ ! -f "$soal" ] && [ -f "$readme" ]; then
               cp "$readme" "$soal"
-              echo "Created: $soal"
             fi
 
             tmp="$(mktemp)"
 
-            cat "$header" >> "$tmp"
-            printf '\n' >> "$tmp"
-
-            if [ -d "$anggota" ]; then
-              mapfile -t files < <(find "$anggota" -maxdepth 1 -type f -name '*.md' -print | sort -V)
-              for file in "${files[@]}"; do
-                cat "$file" >> "$tmp"
+            jq -r '.build[]' "$config_file" | while read md_file; do
+              target_file="${dir}/${md_file}"
+              if [ -f "$target_file" ]; then
+                cat "$target_file" >> "$tmp"
                 printf '\n' >> "$tmp"
-              done
-            fi
-
-            cat "$footer" >> "$tmp"
-            printf '\n' >> "$tmp"
+              fi
+            done
 
             mv "$tmp" "$readme"
-            echo "Generated: $readme"
           done
 
       - name: Commit generated files
         shell: bash
         run: |
           set -euo pipefail
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add tugas-*/README.md tugas-*/SOAL.md
-
+          
+          git add "**/README.md" "**/SOAL.md"
+          
           if git diff --cached --quiet; then
-            echo "Tidak ada perubahan."
             exit 0
           fi
-
+          
           git commit -m "build: generate task README files"
           git push origin main
