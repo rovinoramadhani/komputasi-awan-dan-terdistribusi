@@ -11,6 +11,7 @@
 3. Penskalaan Independen: Arsitektur terdistribusi memberikan kapasitas penskalaan spesifik untuk setiap komponen.
    Lonjakan permintaan pemantauan rute kurir mewajibkan penambahan server hanya untuk Modul Realtime dan Modul Lokasi,
    tanpa menyita memori atau CPU pada server Modul Pesanan.
+4. Bebas Menggunakan Teknologi yang Berbeda: Dengan memisahkan modul menjadi 7 memungkinkan setiap tim pengembang memilih bahasa pemrograman sesuai kebutuhan dari modul yang ingin dikembangkan. Misalnya, Modul Lokasi menggunakan bahasa C++ agar perhitungan koordinat GPS berjalan lebih cepat atau Modul Autentikasi menggunakan Java untuk standar keamanan yang tinggi.
 
 ### Penyelesaian Trade Off
 
@@ -22,3 +23,4 @@
 3. Kesulitan Debugging: Alur eksekusi pesan berjalan secara tidak linear. Masalah kegagalan pesanan mewajibkan teknisi
    untuk membaca log pada banyak server yang berbeda secara bersamaan untuk menemukan titik pasti berhentinya aliran
    data.
+4. Risiko Modul Tertahan (Stuck/Hang) pada RPC Sinkron: Ada dua jalur penting yang menggunakan RPC Sinkron, yaitu antara "Modul Pesanan ke Pembayaran" dan "Modul Realtime ke Lokasi". Jika Modul Pembayaran atau Lokasi merespons dengan lambat maka modul pengirimnya bisa ikut tertahan (stuck) menunggu.
