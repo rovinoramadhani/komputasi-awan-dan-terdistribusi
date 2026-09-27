@@ -22,3 +22,12 @@
 3. Kesulitan Debugging: Alur eksekusi pesan berjalan secara tidak linear. Masalah kegagalan pesanan mewajibkan teknisi
    untuk membaca log pada banyak server yang berbeda secara bersamaan untuk menemukan titik pasti berhentinya aliran
    data.
+4. Risiko Kehilangan Data: Aplikasi menyimpan draf secara otomatis setiap kali pengguna mengubah data, sebelum tombol
+   submit ditekan. Draf disimpan di penyimpanan lokal browser dan dimuat kembali saat aplikasi dibuka setelah browser
+   mengalami crash, sehingga pengguna tidak perlu mengisi ulang seluruh formulir.
+5. Beban Komputasi Berpindah ke Pengguna: Aplikasi memeriksa kemampuan perangkat sebelum memproses data besar. Jika
+   perangkat memiliki sumber daya terbatas, pemrosesan dialihkan ke server agar antarmuka tetap responsif dan penggunaan
+   CPU serta baterai pada smartphone tidak meningkat secara berlebihan.
+6. Fleksibilitas Pengguna: Batas ukuran file ditampilkan sebelum pengguna memilih berkas. Untuk berkas yang melebihi
+   batas, aplikasi menawarkan kompresi otomatis atau unggah bertahap, sehingga pengguna tetap dapat mengirim berkas
+   tanpa harus menyederhanakannya sendiri terlebih dahulu.
