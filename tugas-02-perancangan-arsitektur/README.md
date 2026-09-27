@@ -8,23 +8,25 @@
 | Galang Herjuno Mulya    | 103072430006 |                |
 | Erastus Liubeta Septian | 103072400020 |                |
 
-
 ## Gaya Arsitektur
 
 Pilihan utama: Kombinasi Service Oriented Architecture dan Publish Subscribe.
 
-Justifikasi: Service Oriented Architecture untuk validasi transaksi sinkron dan Publish Subscribe untuk mendelegasikan pembaruan data asinkron.
+Justifikasi: Service Oriented Architecture untuk validasi transaksi sinkron dan Publish Subscribe untuk mendelegasikan
+pembaruan data asinkron.
+
 ```mermaid
 graph LR
-  Client[Pelanggan] -->|HTTP Sinkron| AuthSvc[Modul Autentikasi]
-  Client -->|HTTP Sinkron| OrderSvc[Modul Pesanan]
-  OrderSvc -->|RPC Sinkron| PaymentSvc[Modul Pembayaran]
-  OrderSvc -->|Publish Event| Broker[(Message Broker)]
-  Broker -->|Subscribe| NotifSvc[Modul Notifikasi]
-  Broker -->|Subscribe| RestoSvc[Modul Katalog Resto]
-  Broker -->|Subscribe| RealtimeSvc[Modul Realtime]
-  RealtimeSvc -->|RPC Sinkron| MapSvc[Modul Lokasi]
+    Client[Pelanggan] -->|HTTP Sinkron| AuthSvc[Modul Autentikasi]
+    Client -->|HTTP Sinkron| OrderSvc[Modul Pesanan]
+    OrderSvc -->|RPC Sinkron| PaymentSvc[Modul Pembayaran]
+    OrderSvc -->|Publish Event| Broker[(Message Broker)]
+    Broker -->|Subscribe| NotifSvc[Modul Notifikasi]
+    Broker -->|Subscribe| RestoSvc[Modul Katalog Resto]
+    Broker -->|Subscribe| RealtimeSvc[Modul Realtime]
+    RealtimeSvc -->|RPC Sinkron| MapSvc[Modul Lokasi]
 ```
+
 ## Alur Skenario Serta Jenis Komunikasi
 
 1. Pengguna melakukan login dan memvalidasi sesi melalui Modul Autentikasi menggunakan komunikasi sinkron berupa HTTP
@@ -41,6 +43,7 @@ graph LR
    pencarian kurir terdekat.
 7. Modul Realtime memanggil Modul Lokasi menggunakan komunikasi sinkron untuk menarik data koordinat, kemudian
    meneruskannya ke antarmuka aplikasi pengguna.
+
 ## Analisis Tertulis
 
 ### Penyelesaian Masalah
@@ -65,6 +68,4 @@ graph LR
 3. Kesulitan Debugging: Alur eksekusi pesan berjalan secara tidak linear. Masalah kegagalan pesanan mewajibkan teknisi
    untuk membaca log pada banyak server yang berbeda secara bersamaan untuk menemukan titik pasti berhentinya aliran
    data.
-## Analisis Tertulis
-
 
