@@ -1,74 +1,57 @@
 # Tugas 2 (Pekan 2) — Perancangan Arsitektur untuk FoodGo
 
-**Kelompok:** Kelompok 2
+**Materi terkait:** Architectural style (Layered, SOA, Peer-to-Peer, Publish-Subscribe).
 
-| **Nama**                | **NIM**      | **Kontribusi**                                                                                                                                                                                                                                                 |
-|-------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Rovino Ramadhani        | 103072400031 | Menentukan kombinasi gaya arsitektur SOA dan Publish Subscribe, menyusun diagram arsitektur, menyusun alur skenario end to end, menentukan komunikasi sinkron dan asinkron antar modul, serta melakukan revisi dan penyempurnaan diagram serta struktur tugas. |
-| Galang Herjuno Mulya    | 103072430006 | Menyusun dan melengkapi analisis tertulis mengenai penyelesaian masalah serta trade off dari arsitektur yang digunakan.                                                                                                                                        |
-| Erastus Liubeta Septian | 103072400020 | Melakukan review terhadap rancangan arsitektur dan alur komunikasi antar modul untuk memastikan skenario FoodGo dapat dipahami secara runtut.                                                                                                                  |
-## Gaya Arsitektur
+## Studi Kasus
 
-Pilihan utama: Kombinasi Service Oriented Architecture dan Publish Subscribe.
+Melanjutkan Tugas 1: FoodGo butuh sistem yang **decoupled** agar tim kurir dan tim resto tidak saling mengganggu ketika salah satu modul diperbarui/deploy ulang. Saat ini semua modul (pesanan, pembayaran, notifikasi kurir, katalog resto) berjalan sebagai satu aplikasi monolitik — sekali deploy, semua modul ikut restart dan berisiko downtime total.
 
-Justifikasi: Service Oriented Architecture untuk validasi transaksi sinkron dan Publish Subscribe untuk mendelegasikan pembaruan data asinkron.
+## Tugas Kelompok
+
+1. Pilih **satu** gaya arsitektur utama: **Service-Oriented Architecture (SOA)** atau **Publish-Subscribe**. Boleh dikombinasikan (mis. SOA untuk service inti + Pub-Sub untuk notifikasi), tapi harus dijustifikasi kenapa kombinasi ini yang dipilih.
+2. Gambarkan minimal 4 komponen berikut dan interaksinya: modul Pesanan, modul Pembayaran, modul Kurir/Notifikasi, modul Katalog Resto (dan message broker/API gateway jika relevan).
+3. Jelaskan alur satu skenario penuh secara end-to-end di diagram (misalnya: pelanggan buat pesanan → bayar → resto terima notifikasi → kurir ditugaskan) — tunjukkan komponen mana berkomunikasi dengan siapa, dan **jenis komunikasinya** (sinkron/asinkron, request-response/event).
+4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
+
+## Cara Membuat Diagram (Gratis, Cukup Laptop)
+
+Tidak perlu software berbayar. Dua opsi:
+
+**Opsi A — Mermaid di dalam Markdown (disarankan).** Ditulis sebagai teks biasa di `README.md`, otomatis dirender jadi diagram oleh GitHub — tidak perlu install apa pun.
+
+````markdown
 ```mermaid
 graph LR
-  Client[Pelanggan] -->|HTTP Sinkron| AuthSvc[Modul Autentikasi]
-  Client -->|HTTP Sinkron| OrderSvc[Modul Pesanan]
-  OrderSvc -->|RPC Sinkron| PaymentSvc[Modul Pembayaran]
-  OrderSvc -->|Publish Event| Broker[(Message Broker)]
-  Broker -->|Subscribe| NotifSvc[Modul Notifikasi]
-  Broker -->|Subscribe| RestoSvc[Modul Katalog Resto]
-  Broker -->|Subscribe| RealtimeSvc[Modul Realtime]
-  RealtimeSvc -->|RPC Sinkron| MapSvc[Modul Lokasi]
+  Client[Pelanggan] -->|HTTP request pesan| OrderSvc[Service Pesanan]
+  OrderSvc -->|RPC sinkron| PaymentSvc[Service Pembayaran]
+  OrderSvc -->|publish event OrderCreated| Broker[(Message Broker)]
+  Broker -->|subscribe| NotifSvc[Service Notifikasi Kurir]
+  Broker -->|subscribe| RestoSvc[Service Katalog Resto]
 ```
-## Alur Skenario Serta Jenis Komunikasi
+````
 
-1. Pengguna melakukan login dan memvalidasi sesi melalui Modul Autentikasi menggunakan komunikasi sinkron berupa HTTP
-   request dan response.
-2. Pengguna mengirimkan permintaan pembuatan pesanan menuju Modul Pesanan menggunakan protokol HTTP dengan komunikasi
-   sinkron.
-3. Modul Pesanan mengeksekusi Remote Procedure Call (RPC) ke Modul Pembayaran dengan komunikasi sinkron untuk
-   memvalidasi transaksi secara langsung.
-4. Modul Pesanan bertindak sebagai publisher untuk mengirimkan event berisi data pesanan sukses ke dalam Message Broker
-   menggunakan komunikasi asinkron.
-5. Modul Katalog Resto bertindak sebagai subscriber pada Message Broker untuk membaca event secara asinkron, lalu
-   memulai instruksi pengurangan stok ke restoran.
-6. Modul Notifikasi bertindak sebagai subscriber pada Message Broker untuk membaca event secara asinkron, lalu memicu
-   pencarian kurir terdekat.
-7. Modul Realtime memanggil Modul Lokasi menggunakan komunikasi sinkron untuk menarik data koordinat, kemudian
-   meneruskannya ke antarmuka aplikasi pengguna.
-## Analisis Tertulis
+**Opsi B — draw.io / diagrams.net** (gratis, jalan di browser tanpa akun, atau app desktop offline di [app.diagrams.net](https://app.diagrams.net/)). Ekspor sebagai `.png` dan simpan di folder `diagram/`.
 
-### Penyelesaian Masalah
+## Struktur Submission
 
-1. Penyelesaian Masalah Coupling: Arsitektur ini membebaskan Modul Pesanan dari proses tunggu. Modul Pesanan memberikan
-   respons sukses kepada pengguna setelah pembayaran selesai, tanpa memiliki kewajiban menunggu proses pencarian kurir
-   dari Modul Notifikasi berkat penggunaan Message Broker.
-2. Isolasi Kegagalan Server: Message Broker bertindak sebagai penampung pesan sementara. Apabila server Modul Katalog
-   Resto mengalami crash, data pesanan tidak hilang melainkan tertahan di antrean Message Broker hingga server Modul
-   Katalog Resto hidup kembali dan siap memproses data.
-3. Penskalaan Independen: Arsitektur terdistribusi memberikan kapasitas penskalaan spesifik untuk setiap komponen.
-   Lonjakan permintaan pemantauan rute kurir mewajibkan penambahan server hanya untuk Modul Realtime dan Modul Lokasi,
-   tanpa menyita memori atau CPU pada server Modul Pesanan.
+```
+tugas-02-perancangan-arsitektur/
+├── README.md          # Analisis + diagram Mermaid (jika Opsi A) atau referensi ke diagram/
+├── JURNAL.md
+└── diagram/            # File .png/.drawio jika pakai Opsi B
+```
 
-### Penyelesaian Trade Off
+## Rubrik Penilaian (Tugas 2)
 
-1. Kompleksitas Infrastruktur: Arsitektur kombinasi mewajibkan pengelolaan 7 komponen secara terpisah beserta perawatan
-   infrastruktur Message Broker. Kondisi ini meningkatkan beban operasional pemantauan server secara drastis
-   dibandingkan dengan aplikasi monolitik.
-2. Konsistensi Data: Penggunaan gaya Publish-Subscribe menghasilkan sifat eventual consistency. Terdapat jeda waktu
-   antara status keberhasilan pada Modul Pesanan dengan pembaruan status ketersediaan pada Modul Katalog Resto.
-3. Kesulitan Debugging: Alur eksekusi pesan berjalan secara tidak linear. Masalah kegagalan pesanan mewajibkan teknisi
-   untuk membaca log pada banyak server yang berbeda secara bersamaan untuk menemukan titik pasti berhentinya aliran
-   data.
-4. Risiko Kehilangan Data: Aplikasi menyimpan draf secara otomatis setiap kali pengguna mengubah data, sebelum tombol
-   submit ditekan. Draf disimpan di penyimpanan lokal browser dan dimuat kembali saat aplikasi dibuka setelah browser
-   mengalami crash, sehingga pengguna tidak perlu mengisi ulang seluruh formulir.
-5. Beban Komputasi Berpindah ke Pengguna: Aplikasi memeriksa kemampuan perangkat sebelum memproses data besar. Jika
-   perangkat memiliki sumber daya terbatas, pemrosesan dialihkan ke server agar antarmuka tetap responsif dan penggunaan
-   CPU serta baterai pada smartphone tidak meningkat secara berlebihan.
-6. Fleksibilitas Pengguna: Batas ukuran file ditampilkan sebelum pengguna memilih berkas. Untuk berkas yang melebihi
-   batas, aplikasi menawarkan kompresi otomatis atau unggah bertahap, sehingga pengguna tetap dapat mengirim berkas
-   tanpa harus menyederhanakannya sendiri terlebih dahulu.
+| Komponen | Bobot | Kriteria |
+|---|---|---|
+| Ketepatan pemilihan gaya arsitektur | 20% | Justifikasi SOA/Pub-Sub sesuai kebutuhan *decoupling* di skenario |
+| Kelengkapan & kejelasan diagram | 30% | Semua komponen kunci ada, jenis komunikasi (sinkron/asinkron) jelas ditandai |
+| Analisis trade-off | 30% | Bukan hanya kelebihan — kekurangan/kompleksitas baru juga dibahas |
+| Proses & kontribusi kelompok | 20% | `JURNAL.md`, commit history |
+
+## Batasan Penggunaan AI (Level 2)
+
+Kebijakan **Level 2 (AI Assisted Idea Generation & Structuring)** berlaku — lihat [`../RUBRIK-UMUM.md`](../RUBRIK-UMUM.md). Boleh memakai AI untuk brainstorming komponen apa saja yang umum ada di gaya arsitektur SOA/Pub-Sub; **tidak boleh** meminta AI menggambar diagram final atau menuliskan analisis trade-off yang tinggal ditempel. Catat pemakaian AI di "Log Penggunaan AI" pada `JURNAL.md`.
+
+- Diagram Mermaid/draw.io yang "terlalu generik" (identik dengan contoh tutorial di internet tanpa penyesuaian ke kasus FoodGo) akan dinilai rendah pada komponen kelengkapan & kejelasan diagram.

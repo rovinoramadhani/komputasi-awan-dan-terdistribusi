@@ -1,0 +1,10 @@
+{
+  "output": "ANALISIS.md",
+  "build": [
+    "susunan/identitas.md",
+    "susunan/analisis-rovino.md",
+    "susunan/analisis-galang.md",
+    "susunan/analisis-eras.md",
+    "susunan/kesimpulan-kelompok.md"
+  ]
+}
