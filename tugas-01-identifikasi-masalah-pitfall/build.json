@@ -1,10 +1,10 @@
 {
-  "soal_md": true,
   "build": [
     "susunan/header.md",
     "susunan/anggota/1-galangherjunomulya.md",
     "susunan/anggota/2-rovinoramadhani.md",
     "susunan/anggota/3-erastusliubetaseptian.md",
     "susunan/footer.md"
-  ]
+  ],
+  "output": "ANALISIS.md"
 }
