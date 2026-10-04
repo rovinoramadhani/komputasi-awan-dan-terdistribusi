@@ -52,6 +52,7 @@ graph LR
 3. Penskalaan Independen: Arsitektur terdistribusi memberikan kapasitas penskalaan spesifik untuk setiap komponen.
    Lonjakan permintaan pemantauan rute kurir mewajibkan penambahan server hanya untuk Modul Realtime dan Modul Lokasi,
    tanpa menyita memori atau CPU pada server Modul Pesanan.
+4. Bebas Menggunakan Teknologi yang Berbeda: Dengan memisahkan modul menjadi 7 memungkinkan setiap tim pengembang memilih bahasa pemrograman sesuai kebutuhan dari modul yang ingin dikembangkan. Misalnya, Modul Lokasi menggunakan bahasa C++ agar perhitungan koordinat GPS berjalan lebih cepat atau Modul Autentikasi menggunakan Java untuk standar keamanan yang tinggi.
 
 ### Penyelesaian Trade Off
 
@@ -63,6 +64,9 @@ graph LR
 3. Kesulitan Debugging: Alur eksekusi pesan berjalan secara tidak linear. Masalah kegagalan pesanan mewajibkan teknisi
    untuk membaca log pada banyak server yang berbeda secara bersamaan untuk menemukan titik pasti berhentinya aliran
    data.
+<<<<<<< HEAD
+4. Risiko Modul Tertahan (Stuck/Hang) pada RPC Sinkron: Ada dua jalur penting yang menggunakan RPC Sinkron, yaitu antara "Modul Pesanan ke Pembayaran" dan "Modul Realtime ke Lokasi". Jika Modul Pembayaran atau Lokasi merespons dengan lambat maka modul pengirimnya bisa ikut tertahan (stuck) menunggu.
+=======
 4. Risiko Kehilangan Data: Aplikasi menyimpan draf secara otomatis setiap kali pengguna mengubah data, sebelum tombol
    submit ditekan. Draf disimpan di penyimpanan lokal browser dan dimuat kembali saat aplikasi dibuka setelah browser
    mengalami crash, sehingga pengguna tidak perlu mengisi ulang seluruh formulir.
@@ -72,3 +76,5 @@ graph LR
 6. Fleksibilitas Pengguna: Batas ukuran file ditampilkan sebelum pengguna memilih berkas. Untuk berkas yang melebihi
    batas, aplikasi menawarkan kompresi otomatis atau unggah bertahap, sehingga pengguna tetap dapat mengirim berkas
    tanpa harus menyederhanakannya sendiri terlebih dahulu.
+>>>>>>> c5ca80690cc2eab4fc11822bd4636503d0eb486a
+
