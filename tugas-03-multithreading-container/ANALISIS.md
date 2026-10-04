@@ -1,12 +1,12 @@
-# Tugas 2 (Pekan 2) — Perancangan Arsitektur untuk FoodGo
+# Tugas 3 (Pekan 3) — Multithreading-Container
 
 **Kelompok:** Kelompok 2
 
-| **Nama**                | **NIM**      | **Kontribusi**                                                                                                                                                                                                                                                 |
-|-------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Rovino Ramadhani        | 103072400031 | Menentukan kombinasi gaya arsitektur SOA dan Publish Subscribe, menyusun diagram arsitektur, menyusun alur skenario end to end, menentukan komunikasi sinkron dan asinkron antar modul, serta melakukan revisi dan penyempurnaan diagram serta struktur tugas. |
-| Galang Herjuno Mulya    | 103072430006 | Menyusun dan melengkapi analisis tertulis mengenai penyelesaian masalah serta trade off dari arsitektur yang digunakan.                                                                                                                                        |
-| Erastus Liubeta Septian | 103072400020 | Melakukan review terhadap rancangan arsitektur dan alur komunikasi antar modul untuk memastikan skenario FoodGo dapat dipahami secara runtut.                                                                                                                  |
+| **Nama**                | **NIM**      | **Kontribusi**                                                                                                                                                                                 |
+|-------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Rovino Ramadhani        | 103072400031 | Implementasi simulasi multithreading 100 pesanan dengan 10 worker thread, penerapan `threading.Lock()`, konfigurasi Docker, dokumentasi bukti pengujian, jurnal, dan analisis hasil percobaan. |
+| Galang Herjuno Mulya    | 103072430006 | Analisis tujuan simulasi, perbandingan hasil tanpa dan dengan `threading.Lock()`, pengujian pada Docker, serta analisis trade-off multithreading, Lock, dan container.                         |
+| Erastus Liubeta Septian | 103072400020 | Analisis race condition dan lost update, efektivitas Lock pada critical section, konsistensi eksekusi dalam Docker, serta implikasi penggunaan Lock terhadap performa sistem.                  |
 ## Analisis - ditulis oleh Rovino Ramadhani
 
 Pada tugas ini dilakukan simulasi pemrosesan 100 pesanan menggunakan 10 *thread* yang berjalan secara konkuren.
@@ -27,31 +27,52 @@ bersama. Tanpa mekanisme penguncian, hasil proses dapat menjadi tidak konsisten 
 menggunakan `Lock`, proses perubahan data menjadi terkontrol dan hasil akhir sesuai dengan jumlah pesanan yang diproses.
 
 ---
-﻿# Kerangka Analisis — Galang Herjuno Mulya
+﻿## Kerangka Analisis — Galang Herjuno Mulya
 
+Tujuan simulasi
 
-## Tujuan simulasi
-- Dengan adanya simulasi seperti ini, kami dapat mengetahui, apakah eksekusi pesanan yang menggunakan `threading.Lock()` dan tanpa `threading.Lock()` dapat menghasilkan output yang berbeda, pentingnya untuk menggunakan sesuai dengan kebutuhan agar sistem dapat berjalan dengan efisien dan maksimal.
+- Dengan adanya simulasi seperti ini, kami dapat mengetahui, apakah eksekusi pesanan yang menggunakan `threading.Lock()`
+  dan tanpa `threading.Lock()` dapat menghasilkan output yang berbeda, pentingnya untuk menggunakan sesuai dengan
+  kebutuhan agar sistem dapat berjalan dengan efisien dan maksimal.
 
-## Perbandingan hasil percobaan
-Simulasi menjalankan 100 pesanan dengan 10 worker thread. Pada percobaan **tanpa `threading.Lock()`**, counter hanya mencapai **46 dari 100**. Beberapa thread membaca nilai `processed_count` yang sama sebelum pembaruan selesai, lalu menulis kembali hasilnya; kenaikan counter yang bertumpang tindih pun hilang.
+### Perbandingan hasil percobaan
 
-Pada percobaan **dengan `threading.Lock()`**, counter mencapai **100 dari 100**. Lock membatasi akses bersamaan pada bagian kritis yang membaca dan memperbarui counter. Thread lain menunggu sampai lock dilepas, sehingga tidak ada kenaikan yang saling menimpa.
+Simulasi menjalankan 100 pesanan dengan 10 worker thread. Pada percobaan **tanpa `threading.Lock()`**, counter hanya
+mencapai **46 dari 100**. Beberapa thread membaca nilai `processed_count` yang sama sebelum pembaruan selesai, lalu
+menulis kembali hasilnya; kenaikan counter yang bertumpang tindih pun hilang.
 
+Pada percobaan **dengan `threading.Lock()`**, counter mencapai **100 dari 100**. Lock membatasi akses bersamaan pada
+bagian kritis yang membaca dan memperbarui counter. Thread lain menunggu sampai lock dilepas, sehingga tidak ada
+kenaikan yang saling menimpa.
 
-## Eksekusi di Docker
-Berdasarkan simulasi yang kami lakukan pada file JURNAL.md selesai tanpa kendala. Screenshot build memperlihatkan tahapan build selesai, lalu perintah `docker run --rm order-simulator` dijalankan. Output container adalah **100 dari 100 pesanan**.
+Eksekusi di Docker
+Berdasarkan simulasi yang kami lakukan pada file JURNAL.md selesai tanpa kendala. Screenshot build memperlihatkan
+tahapan build selesai, lalu perintah `docker run --rm order-simulator` dijalankan. Output container adalah **100 dari
+100 pesanan**.
 
-Dibandingkan dengan eksekusi langsung **dengan lock** yang menghasilkan 100, eksekusi dalam container juga menghasilkan 100. Jadi, berdasarkan percobaan yang dicatat, hasil program konsisten di kedua lingkungan. Screenshot tanpa lock menunjukkan nilai 46, hal ini merupakan percobaan kondisi tanpa sinkronisasi, bukan perbandingan lingkungan Docker.
+Dibandingkan dengan eksekusi langsung **dengan lock** yang menghasilkan 100, eksekusi dalam container juga menghasilkan
 
-## Trade-off dan kesimpulan
-- **Threading** lebih ringan untuk simulasi ini dibanding membuat proses OS baru bagi setiap menjalankan pesanan, tetapi thread harus berbagi data sehingga pembaruan data bersama perlu disinkronkan.
-- **Lock** menjaga konsistensi counter, namun hal ini berhadapan biaya yang cukup mahal, yaitu thread lain harus menunggu saat sedang digunakan. Jika lock mencakup pekerjaan yang panjang, waktu tunggu dapat mengurangi proses yang sebeneranya bisa dijalankan secara bersamaan.
-- **Docker** membuat program yang dapat dijalankan dalam lingkungan, tetap memerlukan proses build ulang ketika dipindahkan, dan image/container. Bukti yang ada, memang menunjukkan program berjalan dengan baik, namun tidak mengukur konsumsi memori atau kecepatan dibanding pendekatan proses.
+100. Jadi, berdasarkan percobaan yang dicatat, hasil program konsisten di kedua lingkungan. Screenshot tanpa lock
+     menunjukkan nilai 46, hal ini merupakan percobaan kondisi tanpa sinkronisasi, bukan perbandingan lingkungan Docker.
 
-## Kesimpulan
+### Trade-off dan kesimpulan
 
-Percobaan menunjukkan bahwa multithreading tanpa sinkronisasi bisa saja menghasilkan hitungan yang keliru (46/100), sedangkan penggunaan `threading.Lock()` memiliki hasil yang berbeda, yang dimana  membuat seluruh 100 pesanan terhitung. Hasil di Docker juga 100, sama seperti eksekusi langsung yang menggunakan lock. Oleh karena itu, pada simulasi ini lock diperlukan untuk menjaga data bersama tetap konsisten, dan pada kasus ini Docker berhasil menjalankan program dengan hasil yang sama.
+- **Threading** lebih ringan untuk simulasi ini dibanding membuat proses OS baru bagi setiap menjalankan pesanan, tetapi
+  thread harus berbagi data sehingga pembaruan data bersama perlu disinkronkan.
+- **Lock** menjaga konsistensi counter, namun hal ini berhadapan biaya yang cukup mahal, yaitu thread lain harus
+  menunggu saat sedang digunakan. Jika lock mencakup pekerjaan yang panjang, waktu tunggu dapat mengurangi proses yang
+  sebeneranya bisa dijalankan secara bersamaan.
+- **Docker** membuat program yang dapat dijalankan dalam lingkungan, tetap memerlukan proses build ulang ketika
+  dipindahkan, dan image/container. Bukti yang ada, memang menunjukkan program berjalan dengan baik, namun tidak
+  mengukur konsumsi memori atau kecepatan dibanding pendekatan proses.
+
+### Kesimpulan
+
+Percobaan menunjukkan bahwa multithreading tanpa sinkronisasi bisa saja menghasilkan hitungan yang keliru (46/100),
+sedangkan penggunaan `threading.Lock()` memiliki hasil yang berbeda, yang dimana membuat seluruh 100 pesanan terhitung.
+Hasil di Docker juga 100, sama seperti eksekusi langsung yang menggunakan lock. Oleh karena itu, pada simulasi ini lock
+diperlukan untuk menjaga data bersama tetap konsisten, dan pada kasus ini Docker berhasil menjalankan program dengan
+hasil yang sama.
 
 ---
 ## Analisis - ditulis oleh Erastus Liubeta Septian
@@ -69,4 +90,23 @@ Pengujian ini menganalisis prilaku pemrosesan paralel yang membagikan 100 pesana
 
 4. Evaluasi Implikasi Performa dan Arsitektur
     - Penggunaan Lock membuat proses pengubahan data berjalan bergantian satu persatu dengan total waktu = $$T_{lock} \approx N \times t_{critical}$$ Meskipun harus menunggu program tetap bisa berjalan dengan cepat karena tugas yang berat ditaruh ditaruh di ruang tunggu. Hal ini membuat thread worker tetap dapat menyelesaikan pekerjaan utama secara bersama dan hanya menunggu saat mencatat hasil akhir.
+## Kesimpulan Kelompok
+
+Berdasarkan hasil pengujian dan analisis kelompok, penggunaan multithreading memungkinkan beberapa pekerjaan diproses
+secara bersamaan, tetapi penggunaan data bersama tanpa mekanisme sinkronisasi dapat menyebabkan *race condition*. Pada
+percobaan tanpa `threading.Lock()`, nilai `processed_count` hanya mencapai 46 dari 100 pesanan karena beberapa thread
+membaca dan memperbarui nilai yang sama secara bersamaan sehingga terjadi *lost update*.
+
+Setelah menggunakan `threading.Lock()`, seluruh 100 pesanan berhasil tercatat dengan benar. Lock memastikan bagian
+*critical section* hanya diakses oleh satu thread pada satu waktu sehingga perubahan data bersama tetap konsisten.
+Konsekuensinya, thread lain harus menunggu ketika Lock sedang digunakan sehingga bagian yang dilindungi sebaiknya dibuat
+sesingkat mungkin agar tidak mengurangi keuntungan pemrosesan secara konkuren.
+
+Pengujian menggunakan Docker juga menghasilkan 100 dari 100 pesanan, sama dengan eksekusi langsung yang menggunakan
+Lock. Hal ini menunjukkan bahwa program dan mekanisme sinkronisasi tetap menghasilkan perilaku yang konsisten ketika
+dijalankan di dalam container.
+
+Secara keseluruhan, multithreading tepat digunakan untuk menjalankan pekerjaan secara konkuren, sedangkan Lock
+diperlukan ketika beberapa thread mengakses dan mengubah data bersama. Docker berperan dalam menyediakan lingkungan
+eksekusi yang konsisten tanpa mengubah logika sinkronisasi pada program.
 
