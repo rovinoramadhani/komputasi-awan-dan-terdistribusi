@@ -23,4 +23,5 @@ Dibandingkan dengan eksekusi langsung **dengan lock** yang menghasilkan 100, eks
 ## Kesimpulan
 
 Percobaan menunjukkan bahwa multithreading tanpa sinkronisasi bisa saja menghasilkan hitungan yang keliru (46/100), sedangkan penggunaan `threading.Lock()` memiliki hasil yang berbeda, yang dimana  membuat seluruh 100 pesanan terhitung. Hasil di Docker juga 100, sama seperti eksekusi langsung yang menggunakan lock. Oleh karena itu, pada simulasi ini lock diperlukan untuk menjaga data bersama tetap konsisten, dan pada kasus ini Docker berhasil menjalankan program dengan hasil yang sama.
+
 ---
