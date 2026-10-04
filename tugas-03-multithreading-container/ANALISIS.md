@@ -27,7 +27,7 @@ bersama. Tanpa mekanisme penguncian, hasil proses dapat menjadi tidak konsisten 
 menggunakan `Lock`, proses perubahan data menjadi terkontrol dan hasil akhir sesuai dengan jumlah pesanan yang diproses.
 
 ---
-﻿## Kerangka Analisis — Galang Herjuno Mulya
+## Kerangka Analisis — Galang Herjuno Mulya
 
 Tujuan simulasi
 
