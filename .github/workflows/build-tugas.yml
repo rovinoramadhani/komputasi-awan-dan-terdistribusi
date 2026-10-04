@@ -1,4 +1,4 @@
-name: Build README
+name: Build Tugas
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.ACTION_DEPLOY_KEY }}
 
-      - name: Generate README files
+      - name: Generate Markdown files
         shell: bash
         run: |
           set -euo pipefail
@@ -31,14 +31,9 @@ jobs:
 
           find . -type f -name "build.json" | while read config_file; do
             dir=$(dirname "$config_file")
-          
-            soal_md=$(jq -r '.soal_md' "$config_file")
-            readme="${dir}/README.md"
-            soal="${dir}/SOAL.md"
 
-            if [ "$soal_md" = "true" ] && [ ! -f "$soal" ] && [ -f "$readme" ]; then
-              cp "$readme" "$soal"
-            fi
+            output_name=$(jq -r '.output // "ANALISIS.md"' "$config_file")
+            output_file="${dir}/${output_name}"
 
             tmp="$(mktemp)"
 
@@ -50,7 +45,7 @@ jobs:
               fi
             done
 
-            mv "$tmp" "$readme"
+            mv "$tmp" "$output_file"
           done
 
       - name: Commit generated files
@@ -59,12 +54,12 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          git add "**/README.md" "**/SOAL.md"
-          
+
+          git add -A
+
           if git diff --cached --quiet; then
             exit 0
           fi
-          
-          git commit -m "build: generate task README files"
+
+          git commit -m "build: generate task markdown files"
           git push origin main
