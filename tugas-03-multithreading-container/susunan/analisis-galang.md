@@ -1,4 +1,4 @@
-﻿## Kerangka Analisis — Galang Herjuno Mulya
+## Kerangka Analisis — Galang Herjuno Mulya
 
 Tujuan simulasi
 
