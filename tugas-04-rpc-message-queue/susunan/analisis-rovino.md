@@ -63,5 +63,3 @@ Pengujian menunjukkan bahwa **RPC berhasil menjalankan komunikasi sinkron** deng
 sedangkan **Message Queue berhasil mempertahankan 9 pesan** saat Consumer tidak aktif dan memprosesnya setelah Consumer
 kembali berjalan. Karena itu, pemisahan RPC untuk operasi yang membutuhkan respons langsung dan Message Queue untuk
 notifikasi asinkron merupakan pilihan yang sesuai dengan kebutuhan komunikasi antar modul FoodGo.
-
----

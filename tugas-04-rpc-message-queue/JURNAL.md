@@ -126,10 +126,6 @@ dengan waktu respons 2,04 detik, sedangkan RabbitMQ menahan 9 pesan saat Consume
 setelah Consumer berjalan kembali. Hasil ini mendukung penggunaan RPC untuk operasi yang memerlukan respons seketika dan
 Message Queue untuk notifikasi yang dapat diproses secara asinkron.
 
-Catatan kontribusi: Pembagian tugas per anggota dan riwayat commit tidak dituliskan sebagai hasil pengujian karena
-bukti kontribusi individual belum disertakan pada bahan yang ditinjau. Riwayat commit Git perlu tetap dilampirkan sesuai
-rubrik penilaian.
-
 ## Log Penggunaan AI (Level 2)
 
 > Wajib diisi sesuai kebijakan Level 2 di [`../RUBRIK-UMUM.md`](../RUBRIK-UMUM.md). Tulis "Tidak memakai AI" pada baris
