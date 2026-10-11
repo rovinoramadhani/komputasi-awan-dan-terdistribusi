@@ -7,26 +7,74 @@
 | Rovino Ramadhani        | 103072400031 |                |
 | Galang Herjuno Mulya    | 103072430006 |                |
 | Erastus Liubeta Septian | 103072400020 |                |
+## Analisis - ditulis oleh Rovino Ramadhani
 
+### 1. Analisis Komunikasi RPC (Sinkron)
+
+Pada jalur RPC, modul Pesanan berkomunikasi langsung dengan modul Pembayaran melalui pemanggilan fungsi `cek_saldo` dan
+`proses_pembayaran`. Pengujian menunjukkan bahwa `cek_saldo("user1")` mengembalikan saldo **50.000** dengan waktu
+respons **2,04 detik**. Setelah pembayaran sebesar **20.000** diproses, server mengembalikan status `sukses` dan saldo
+akhir **30.000**.
+
+Waktu tunggu tersebut menjadi bukti sifat sinkron (blocking): modul Pesanan harus menunggu hasil dari modul
+Pembayaran sebelum melanjutkan proses. Pola ini tepat untuk pengecekan saldo dan pembayaran karena hasil transaksi
+dibutuhkan langsung untuk menentukan langkah berikutnya. Namun, ketergantungan terhadap respons server juga menjadi
+kekurangan RPC. Jika server Pembayaran lambat atau tidak merespons, proses pada modul Pesanan ikut tertahan.
+
+**Bukti pengujian:** `bukti/rpc.png`
+
+### 2. Analisis Message Queue Saat Consumer Aktif
+
+Pada jalur Message Queue, modul Pembayaran bertindak sebagai *Publisher*, sedangkan modul Kurir/Notifikasi bertindak
+sebagai *Consumer*. RabbitMQ dijalankan melalui Docker sebagai perantara komunikasi. Saat Consumer aktif, Publisher
+mengirimkan 3 event pembayaran, masing-masing untuk `user1`, `user2`, dan `user3`, dengan nominal **20.000**,
+**40.000**, dan **60.000**. Ketiga event tersebut diterima dan diproses oleh Consumer.
+
+Hasil ini memperlihatkan bahwa Publisher cukup mengirimkan event ke antrean tanpa harus memanggil modul Kurir secara
+langsung. Dengan pemisahan tersebut, proses pengiriman notifikasi tidak perlu dijadikan bagian dari respons langsung
+modul Pembayaran.
+
+**Bukti pengujian:** `bukti/mq.docker.png` dan `bukti/mq.kondisi_consumer_aktif.png`
+
+### 3. Analisis *Asynchronous Decoupling* Saat Consumer Tidak Aktif
+
+Pengujian berikutnya dilakukan dengan menghentikan Consumer, kemudian menjalankan Publisher sebanyak **3 kali**. Setiap
+eksekusi mengirimkan 3 event sehingga total terdapat 9 pesan. Dashboard RabbitMQ menunjukkan Ready: 9,
+Unacked: 0, dan Consumers: 0. Artinya, tidak ada Consumer yang aktif, tetapi seluruh pesan tetap berada dalam
+antrean dan siap dikirim ketika Consumer tersedia.
+
+Setelah Consumer dijalankan kembali, terminal menampilkan **9 notifikasi** yang diproses. Hasil ini membuktikan
+*asynchronous decoupling*: Publisher tetap dapat mengirimkan pesan ketika Consumer tidak aktif, sementara RabbitMQ
+menahan pesan untuk diproses kemudian. Implementasi juga menggunakan antrean `durable=True`, pesan persisten, serta
+*manual acknowledgement* setelah pemrosesan.
+
+Bukti tersebut berlaku untuk skenario **Consumer dimatikan lalu diaktifkan kembali**. Ketahanan pesan terhadap *restart*
+RabbitMQ sendiri belum diuji dalam dokumentasi ini.
+
+**Bukti pengujian:** `bukti/mq.kondisi_asynchronous_decoupling_1.png`,
+`bukti/mq.kondisi_asynchronous_decoupling_dashboard_rabbitMQ.png`, dan `bukti/mq.kondisi_asynchronous_decoupling_2.png`
+
+### 4. Analisis Pemilihan Pola Komunikasi
+
+1. RPC untuk pengecekan saldo dan proses pembayaran. Kedua operasi membutuhkan jawaban langsung agar modul Pesanan
+   mengetahui apakah pembayaran dapat dilanjutkan atau harus ditolak. Keuntungannya adalah alur permintaan dan respons
+   jelas; kekurangannya adalah proses menunggu ketersediaan server.
+2. Message Queue untuk notifikasi keberhasilan pembayaran. Notifikasi tidak harus selesai pada saat transaksi
+   dilakukan. Keuntungannya adalah modul Pembayaran tidak bergantung pada kondisi modul Kurir ketika mengirimkan event;
+   konsekuensinya adalah notifikasi diproses secara tertunda jika antrean menumpuk atau Consumer tidak aktif.
+3. Risiko jika pola digunakan tidak sesuai kebutuhan. RPC untuk notifikasi membuat modul Pembayaran ikut menunggu
+   modul Kurir. Sebaliknya, Message Queue untuk pengecekan saldo memerlukan mekanisme tambahan untuk menghubungkan
+   permintaan dengan balasan, sehingga alurnya lebih rumit untuk kebutuhan respons langsung.
+
+### 5. Kesimpulan
+
+Pengujian menunjukkan bahwa **RPC berhasil menjalankan komunikasi sinkron** dengan waktu tunggu terukur **2,04 detik**,
+sedangkan **Message Queue berhasil mempertahankan 9 pesan** saat Consumer tidak aktif dan memprosesnya setelah Consumer
+kembali berjalan. Karena itu, pemisahan RPC untuk operasi yang membutuhkan respons langsung dan Message Queue untuk
+notifikasi asinkron merupakan pilihan yang sesuai dengan kebutuhan komunikasi antar modul FoodGo.
+
+---
 
 
 ## Kesimpulan Kelompok
-
-Berdasarkan hasil pengujian dan analisis kelompok, penggunaan multithreading memungkinkan beberapa pekerjaan diproses
-secara bersamaan, tetapi penggunaan data bersama tanpa mekanisme sinkronisasi dapat menyebabkan *race condition*. Pada
-percobaan tanpa `threading.Lock()`, nilai `processed_count` hanya mencapai 46 dari 100 pesanan karena beberapa thread
-membaca dan memperbarui nilai yang sama secara bersamaan sehingga terjadi *lost update*.
-
-Setelah menggunakan `threading.Lock()`, seluruh 100 pesanan berhasil tercatat dengan benar. Lock memastikan bagian
-*critical section* hanya diakses oleh satu thread pada satu waktu sehingga perubahan data bersama tetap konsisten.
-Konsekuensinya, thread lain harus menunggu ketika Lock sedang digunakan sehingga bagian yang dilindungi sebaiknya dibuat
-sesingkat mungkin agar tidak mengurangi keuntungan pemrosesan secara konkuren.
-
-Pengujian menggunakan Docker juga menghasilkan 100 dari 100 pesanan, sama dengan eksekusi langsung yang menggunakan
-Lock. Hal ini menunjukkan bahwa program dan mekanisme sinkronisasi tetap menghasilkan perilaku yang konsisten ketika
-dijalankan di dalam container.
-
-Secara keseluruhan, multithreading tepat digunakan untuk menjalankan pekerjaan secara konkuren, sedangkan Lock
-diperlukan ketika beberapa thread mengakses dan mengubah data bersama. Docker berperan dalam menyediakan lingkungan
-eksekusi yang konsisten tanpa mengubah logika sinkronisasi pada program.
 
