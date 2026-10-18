@@ -2,8 +2,8 @@
 
 **Kelompok:** Kelompok 2
 
-| **Nama**                | **NIM**      | **Kontribusi** |
-|-------------------------|--------------|----------------|
-| Rovino Ramadhani        | 103072400031 |                |
-| Galang Herjuno Mulya    | 103072430006 |                |
-| Erastus Liubeta Septian | 103072400020 |                |
+| Nama                    | NIM          | Kontribusi                                                                                                                                                                                                                                                                                                                 |
+|-------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Rovino Ramadhani        | 103072400031 | Mengimplementasikan Bully Algorithm pada `src/node.py`, melakukan pengujian pemilihan pemimpin awal dan pemilihan ulang, mendokumentasikan hasil pengujian melalui log dan screenshot, serta menyusun analisis hasil simulasi dan keterbatasan implementasi. Melakukan integrasi hasil pekerjaan kelompok ke branch utama. |
+| Galang Herjuno Mulya    | 103072430006 | Menyusun analisis jumlah pesan selama proses pemilihan pemimpin, mengevaluasi mekanisme timeout dan waktu pemilihan ulang, serta mengidentifikasi keterbatasan implementasi, kelengkapan bukti pengujian, dan bagian laporan yang memerlukan perbaikan.                                                                    |
+| Erastus Liubeta Septian | 103072400020 | Menyusun analisis alur kerja Bully Algorithm pada skenario start normal dan kegagalan pemimpin, menjelaskan proses komunikasi `ELECTION`, `OK`, dan `COORDINATOR`, serta membahas hasil implementasi dan relevansinya terhadap permasalahan koordinasi pada sistem FoodGo.                                                 |
