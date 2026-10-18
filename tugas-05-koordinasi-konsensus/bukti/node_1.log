@@ -1,0 +1,25 @@
+[Node 1] Listening di port 5001
+[Node 1] Starting ELECTION; higher nodes: [2, 3, 4, 5]
+[Node 1] No OK received before timeout
+[Node 1] Elected as LEADER: Node 1
+[Node 1] Sent COORDINATOR to Node 2
+[Node 1] Sent COORDINATOR to Node 3
+[Node 1] Received COORDINATOR from Node 2
+[Node 1] Current LEADER: Node 2
+[Node 1] Received COORDINATOR from Node 3
+[Node 1] Current LEADER: Node 3
+[Node 1] Received COORDINATOR from Node 4
+[Node 1] Current LEADER: Node 4
+[Node 1] Received COORDINATOR from Node 5
+[Node 1] Current LEADER: Node 5
+[Node 1] LEADER Node 5 is unavailable; starting re-election
+[Node 1] Starting ELECTION; higher nodes: [2, 3, 4, 5]
+[Node 1] Sent ELECTION to Node 2
+[Node 1] Sent ELECTION to Node 3
+[Node 1] Received OK from Node 2
+[Node 1] Sent ELECTION to Node 4
+[Node 1] Received OK from Node 3
+[Node 1] Received OK; waiting for COORDINATOR
+[Node 1] Received OK from Node 4
+[Node 1] Received COORDINATOR from Node 4
+[Node 1] Current LEADER: Node 4

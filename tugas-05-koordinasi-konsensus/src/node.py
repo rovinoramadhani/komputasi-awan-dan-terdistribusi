@@ -26,6 +26,10 @@ class Node:
         self.peers = peers
         self.leader_id = None
         self.lock = threading.Lock()
+        self.ok_received = threading.Event()
+        self.coordinator_received = threading.Event()
+        self.election_running = False
+        self.output_lock = threading.Lock()
 
     # ---------- Infrastruktur jaringan (SUDAH LENGKAP, jangan diubah) ----------
 
@@ -58,6 +62,10 @@ class Node:
 
     # ---------- Logika Bully Algorithm (LENGKAPI BAGIAN INI) ----------
 
+    def log(self, message: str):
+        with self.output_lock:
+            print(f"[Node {self.node_id}] {message}", flush=True)
+
     def on_message(self, sender_id: int, msg_type: str):
         """Dipanggil setiap kali node ini menerima pesan dari node lain."""
         # TODO 1: tangani tiga jenis pesan berikut:
@@ -67,7 +75,30 @@ class Node:
         #   - "OK": tandai bahwa ada node lebih tinggi yang masih hidup, sehingga
         #     kita TIDAK boleh mendeklarasikan diri sebagai leader.
         #   - "COORDINATOR": simpan sender_id sebagai leader_id yang baru.
-        print(f"[Node {self.node_id}] Menerima pesan '{msg_type}' dari node {sender_id} (TODO: proses ini)")
+        self.log(f"Received {msg_type} from Node {sender_id}")
+
+        if msg_type == "ELECTION":
+            if self.node_id > sender_id and sender_id in self.peers:
+                if self.send_message(self.peers[sender_id], "OK"):
+                    self.log(f"Sent OK to Node {sender_id}")
+                threading.Thread(target=self.start_election, daemon=True).start()
+
+        elif msg_type == "OK":
+            if sender_id > self.node_id:
+                with self.lock:
+                    if self.election_running:
+                        self.ok_received.set()
+
+        elif msg_type == "COORDINATOR":
+            if sender_id < self.node_id:
+                self.log(f"Ignored lower-priority COORDINATOR from Node {sender_id}; starting ELECTION")
+                threading.Thread(target=self.start_election, daemon=True).start()
+                return
+
+            with self.lock:
+                self.leader_id = sender_id
+                self.coordinator_received.set()
+            self.log(f"Current LEADER: Node {sender_id}")
 
     def start_election(self):
         """Dipanggil saat node ini mendeteksi leader tidak ada / tidak merespons."""
@@ -75,16 +106,47 @@ class Node:
         # Tunggu ELECTION_TIMEOUT detik untuk balasan "OK" (gunakan flag/event yang
         # diset di on_message saat menerima "OK").
         # Jika TIDAK ADA balasan "OK" dalam waktu tersebut -> panggil declare_leader().
-        higher_peers = {pid: p for pid, p in self.peers.items() if pid > self.node_id}
-        print(f"[Node {self.node_id}] TODO: mulai election ke peer lebih tinggi: {higher_peers}")
+        with self.lock:
+            if self.election_running:
+                return
+            self.election_running = True
+            self.leader_id = None
+            self.ok_received.clear()
+            self.coordinator_received.clear()
+
+        try:
+            higher_peers = {pid: p for pid, p in self.peers.items() if pid > self.node_id}
+            self.log(f"Starting ELECTION; higher nodes: {list(higher_peers)}")
+
+            for peer_id, peer_port in higher_peers.items():
+                if self.send_message(peer_port, "ELECTION"):
+                    self.log(f"Sent ELECTION to Node {peer_id}")
+
+            if self.ok_received.wait(ELECTION_TIMEOUT):
+                self.log("Received OK; waiting for COORDINATOR")
+                if not self.coordinator_received.wait(ELECTION_TIMEOUT * 2):
+                    self.log("COORDINATOR timeout; ELECTION will retry")
+            elif not self.coordinator_received.is_set():
+                self.log("No OK received before timeout")
+                self.declare_leader()
+        finally:
+            with self.lock:
+                self.election_running = False
 
     def declare_leader(self):
         """Node ini menyatakan dirinya leader dan memberi tahu semua node lain."""
         # TODO 3: set self.leader_id = self.node_id, lalu kirim "COORDINATOR"
         # ke SEMUA peer (bukan cuma yang lebih tinggi).
         with self.lock:
+            if self.leader_id is not None and self.leader_id > self.node_id:
+                return
             self.leader_id = self.node_id
-        print(f"[Node {self.node_id}] TODO: broadcast COORDINATOR, saya jadi leader")
+            self.coordinator_received.set()
+
+        self.log(f"Elected as LEADER: Node {self.node_id}")
+        for peer_id, peer_port in self.peers.items():
+            if self.send_message(peer_port, "COORDINATOR"):
+                self.log(f"Sent COORDINATOR to Node {peer_id}")
 
     def monitor_leader(self):
         """Loop periodik: cek apakah leader masih hidup, trigger election jika mati."""
@@ -94,7 +156,32 @@ class Node:
             # (mis. kirim pesan "PING" atau cukup coba connect). Jika gagal
             # (leader mati) dan node ini belum tahu leader baru, panggil
             # start_election().
-            pass
+            with self.lock:
+                leader_id = self.leader_id
+                election_running = self.election_running
+
+            if leader_id is None:
+                if not election_running:
+                    self.start_election()
+                continue
+
+            if leader_id == self.node_id:
+                continue
+
+            leader_port = self.peers.get(leader_id)
+            try:
+                if leader_port is None:
+                    raise ConnectionError("Leader port is unavailable")
+                # Koneksi TCP cukup untuk memeriksa apakah socket leader masih aktif.
+                with socket.create_connection(("localhost", leader_port), timeout=1.0):
+                    pass
+            except (ConnectionError, socket.timeout, OSError):
+                with self.lock:
+                    if self.leader_id != leader_id:
+                        continue
+                    self.leader_id = None
+                self.log(f"LEADER Node {leader_id} is unavailable; starting re-election")
+                self.start_election()
 
 
 def main():
@@ -102,7 +189,7 @@ def main():
     parser.add_argument("--id", type=int, required=True)
     parser.add_argument("--port", type=int, required=True)
     parser.add_argument("--peers", type=str, required=True,
-                         help="daftar port peer dipisah koma, mis. 5002,5003,5004,5005")
+                        help="daftar port peer dipisah koma, mis. 5002,5003,5004,5005")
     args = parser.parse_args()
 
     # Asumsi konvensi port: id N selalu di port 5000+N (lihat contoh perintah di README).
