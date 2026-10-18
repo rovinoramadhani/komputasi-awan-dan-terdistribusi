@@ -1,19 +1,23 @@
 ## Kesimpulan Kelompok
 
-Berdasarkan hasil pengujian dan analisis kelompok, penggunaan multithreading memungkinkan beberapa pekerjaan diproses
-secara bersamaan, tetapi penggunaan data bersama tanpa mekanisme sinkronisasi dapat menyebabkan *race condition*. Pada
-percobaan tanpa `threading.Lock()`, nilai `processed_count` hanya mencapai 46 dari 100 pesanan karena beberapa thread
-membaca dan memperbarui nilai yang sama secara bersamaan sehingga terjadi *lost update*.
+Berdasarkan hasil implementasi dan pengujian, kelompok berhasil menerapkan Bully Algorithm untuk melakukan pemilihan
+pemimpin (leader election) pada sistem terdistribusi yang terdiri dari lima node virtual. Pada skenario pertama, Node 5
+berhasil terpilih sebagai pemimpin karena memiliki ID tertinggi. Meskipun Node 1 hingga Node 4 sempat mendeklarasikan
+diri sebagai pemimpin sementara akibat perbedaan waktu komunikasi dan timeout, seluruh node pada akhirnya mengenali Node
+5 sebagai pemimpin aktif setelah menerima pesan COORDINATOR.
 
-Setelah menggunakan `threading.Lock()`, seluruh 100 pesanan berhasil tercatat dengan benar. Lock memastikan bagian
-*critical section* hanya diakses oleh satu thread pada satu waktu sehingga perubahan data bersama tetap konsisten.
-Konsekuensinya, thread lain harus menunggu ketika Lock sedang digunakan sehingga bagian yang dilindungi sebaiknya dibuat
-sesingkat mungkin agar tidak mengurangi keuntungan pemrosesan secara konkuren.
+Pada skenario kedua, ketika Node 5 dihentikan, node yang tersisa berhasil melakukan pemilihan ulang (re-election) secara
+otomatis. Proses ini melibatkan pengiriman pesan ELECTION, penerimaan balasan OK, dan pengumuman pemimpin baru melalui
+pesan COORDINATOR. Hasil pengujian menunjukkan bahwa Node 4 berhasil mengambil alih kepemimpinan sebagai node dengan ID
+tertinggi yang masih aktif, tanpa perlu menjalankan ulang seluruh sistem.
 
-Pengujian menggunakan Docker juga menghasilkan 100 dari 100 pesanan, sama dengan eksekusi langsung yang menggunakan
-Lock. Hal ini menunjukkan bahwa program dan mekanisme sinkronisasi tetap menghasilkan perilaku yang konsisten ketika
-dijalankan di dalam container.
+Dari hasil analisis kelompok, Bully Algorithm memiliki keunggulan berupa mekanisme pemilihan pemimpin yang terstruktur
+dan kemampuan melakukan pergantian pemimpin ketika terjadi kegagalan. Namun, algoritma ini memiliki keterbatasan berupa
+meningkatnya jumlah pesan komunikasi ketika beberapa node memulai pemilihan secara bersamaan serta adanya waktu tunggu
+sebelum pemimpin baru ditetapkan. Dibandingkan Raft, Bully hanya berfokus pada pemilihan pemimpin dan tidak menyediakan
+mekanisme konsensus untuk replikasi data.
 
-Secara keseluruhan, multithreading tepat digunakan untuk menjalankan pekerjaan secara konkuren, sedangkan Lock
-diperlukan ketika beberapa thread mengakses dan mengubah data bersama. Docker berperan dalam menyediakan lingkungan
-eksekusi yang konsisten tanpa mengubah logika sinkronisasi pada program.
+Dalam konteks FoodGo, penerapan Bully Algorithm dapat menjadi dasar penentuan satu node yang bertanggung jawab mengelola
+antrean pesanan pusat. Namun, pemilihan pemimpin saja belum menjamin konsistensi urutan pesanan maupun mencegah
+pemrosesan ganda. Oleh karena itu, sistem tetap membutuhkan mekanisme pengurutan, sinkronisasi data, dan pengendalian
+pemrosesan pesanan agar koordinasi antarnode berjalan secara konsisten.
