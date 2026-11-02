@@ -1,9 +1,9 @@
-# Tugas 6 (Pekan 6) — Penamaan & Resolusi Lokasi
+# Tugas 6 (Pekan 6) - Penamaan & Resolusi Lokasi
 
 **Kelompok:** Kelompok 2
 
-| Nama                    | NIM          | Kontribusi                                                                                                                                                                                 |
-|-------------------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Rovino Ramadhani        | 103072400031 | Implementasi simulasi Chord DHT (lookup, join, leave), pengujian dan dokumentasi hasil program, penyusunan jurnal, penulisan analisis individu, serta penyiapan struktur dokumen kelompok. |
-| Galang Herjuno Mulya    | 103072430006 |                                                                                                                                                                                            |
-| Erastus Liubeta Septian | 103072400020 |                                                                                                                                                                                            |
+| Nama                    | NIM          | Kontribusi                                                                                                                                                                                                                                                                                |
+|-------------------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Rovino Ramadhani        | 103072400031 | Implementasi simulasi Chord DHT (lookup, join, leave), pengujian dan dokumentasi hasil program, penyusunan jurnal, penulisan analisis individu, serta penyiapan struktur dokumen kelompok.                                                                                                |
+| Galang Herjuno Mulya    | 103072430006 | Penyusunan analisis pembaruan IP kurir, visualisasi topologi ring dan distribusi mapping, analisis perpindahan tanggung jawab node, penanganan hash collision, serta evaluasi keterbatasan dan skalabilitas implementasi Chord DHT.                                                       |
+| Erastus Liubeta Septian | 103072400020 | Penyusunan analisis perbandingan DHT/Chord dengan Flat Naming dan DNS, visualisasi topologi ring dan pemetaan ID kurir, analisis mekanisme perpindahan tanggung jawab saat node keluar, serta penyusunan kesimpulan terkait desentralisasi, skalabilitas, dan efisiensi pengelolaan data. |
