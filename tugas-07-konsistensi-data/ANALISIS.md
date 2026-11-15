@@ -1,12 +1,23 @@
 # Tugas 7 (Pekan 7) - Konsistensi Data
 
+**Mata Kuliah:** Komputasi Awan dan Terdistribusi
+
 **Kelompok:** Kelompok 2
 
-| Nama                    | NIM          | Kontribusi |
-|-------------------------|--------------|------------|
-| Rovino Ramadhani        | 103072400031 |            |
-| Galang Herjuno Mulya    | 103072430006 |            |
-| Erastus Liubeta Septian | 103072400020 |            |
+| Nama                    | NIM          | Kontribusi                                                                                                                                                                                                                     |
+|-------------------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Rovino Ramadhani        | 103072400031 | Menyusun jawaban kelompok, menganalisis hasil simulasi, membuat sequence diagram, mengimplementasikan simulasi replikasi dan Read-Your-Writes, menyiapkan bukti pengujian, serta mengelola struktur dan integrasi dokumentasi. |
+| Galang Herjuno Mulya    | 103072430006 | Menganalisis permasalahan konsistensi saldo FoodGo, membandingkan Eventual dan Sequential Consistency, menjelaskan dampak bisnis keterlambatan replikasi, serta mengusulkan Read-Your-Writes.                                  |
+| Erastus Liubeta Septian | 103072400020 | Menganalisis pemilihan model konsistensi, mengkaji mekanisme Client-Centric Consistency, mengevaluasi hasil simulasi, serta memberikan contoh penerapan konsistensi pada aplikasi transportasi online.                         |
+
+## Pembagian Tanggung Jawab
+
+1. **Rovino Ramadhani:** Implementasi simulasi, pengujian, dokumentasi teknis, jawaban kelompok, dan integrasi hasil
+   pekerjaan.
+2. **Galang Herjuno Mulya:** Analisis kebutuhan konsistensi data dan pengaruhnya terhadap operasional serta kepercayaan
+   pelanggan FoodGo.
+3. **Erastus Liubeta Septian:** Analisis pendekatan konsistensi, evaluasi hasil pengujian, dan pengembangan skenario
+   pembanding.
 ## Jawaban Kelompok
 
 ### Bagian 1 - Analisis
@@ -111,7 +122,7 @@ pembacaan dialihkan ke Jakarta sehingga saldo Rp70.000 tetap dapat diperoleh.
 
 #### 3. Hasil Pengujian Simulasi
 
-![Hasil pengujian simulasi replikasi Jakarta dan Bandung](output.png)
+![Hasil pengujian simulasi replikasi Jakarta dan Bandung](/tugas-07-konsistensi-data/bukti/output.png)
 
 Gambar di atas menunjukkan hasil eksekusi program Python. Pada skenario tanpa Read-Your-Writes, server Bandung
 menampilkan saldo 0.0 meskipun pelanggan telah melakukan top-up Rp50.000. Setelah penerapan Read-Your-Writes, sistem
@@ -179,3 +190,21 @@ Sebagai pembanding pada kasus aplikasi ojek online:
 
 ## Kesimpulan Kelompok
 
+Berdasarkan analisis seluruh anggota kelompok dan hasil simulasi pada studi kasus e-wallet FoodGo, dapat disimpulkan
+bahwa Eventual Consistency saja tidak cukup untuk menjamin pelanggan memperoleh saldo terbaru setelah melakukan
+top-up. Keterlambatan replikasi antara server Jakarta dan Bandung dapat menyebabkan pembacaan saldo lama (*inconsistent
+read*) dan berpotensi mengakibatkan penolakan transaksi.
+
+Sequential Consistency memberikan jaminan keterurutan operasi yang lebih kuat, tetapi penerapannya perlu
+mempertimbangkan biaya koordinasi antarserver. Oleh karena itu, kelompok mengusulkan pendekatan Client-Centric
+Consistency, khususnya Read-Your-Writes, untuk menjamin pelanggan dapat membaca perubahan saldo yang telah
+berhasil dilakukan.
+
+Hasil simulasi membuktikan bahwa tanpa Read-Your-Writes, saldo Rp50.000 yang telah diperbarui di Jakarta masih terbaca
+Rp0 di Bandung akibat keterlambatan replikasi selama 2 detik. Setelah mekanisme Read-Your-Writes diterapkan, sistem
+berhasil mendeteksi perbedaan versi data dan mengalihkan pembacaan ke Jakarta sehingga saldo terbaru Rp70.000 dapat
+ditampilkan.
+
+Dengan demikian, Read-Your-Writes efektif mengatasi permasalahan pembacaan saldo lama pada skenario yang diuji,
+tanpa harus menunggu seluruh replika selesai melakukan sinkronisasi. Namun, transaksi keuangan tetap memerlukan
+mekanisme tambahan untuk menjaga keamanan dan konsistensi perubahan saldo secara bersamaan.
