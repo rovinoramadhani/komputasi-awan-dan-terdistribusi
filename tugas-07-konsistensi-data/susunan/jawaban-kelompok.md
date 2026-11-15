@@ -102,7 +102,7 @@ pembacaan dialihkan ke Jakarta sehingga saldo Rp70.000 tetap dapat diperoleh.
 
 #### 3. Hasil Pengujian Simulasi
 
-![Hasil pengujian simulasi replikasi Jakarta dan Bandung](output.png)
+![Hasil pengujian simulasi replikasi Jakarta dan Bandung](/tugas-07-konsistensi-data/bukti/output.png)
 
 Gambar di atas menunjukkan hasil eksekusi program Python. Pada skenario tanpa Read-Your-Writes, server Bandung
 menampilkan saldo 0.0 meskipun pelanggan telah melakukan top-up Rp50.000. Setelah penerapan Read-Your-Writes, sistem
