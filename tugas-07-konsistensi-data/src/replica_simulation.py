@@ -5,8 +5,8 @@ Mensimulasikan delay replikasi dan masalah inconsistent read,
 lalu memperbaikinya dengan mekanisme Read-Your-Writes sederhana.
 """
 
-import time
 import threading
+import time
 
 REPLICATION_DELAY = 2.0  # detik, simulasi lambatnya sinkronisasi antar server
 
@@ -39,10 +39,13 @@ class ReplicationSystem:
         saldo_baru = self.jakarta.read(user_id) + jumlah
         self.jakarta.write(user_id, saldo_baru, version)
 
-        # TODO 1: replikasi ke Bandung TERTUNDA (simulasikan dengan
-        # threading.Timer(REPLICATION_DELAY, ...) yang memanggil
-        # self.bandung.write(user_id, saldo_baru, version) setelah delay.
-        print(f"[TODO] Replikasi ke Bandung akan tertunda {REPLICATION_DELAY} detik")
+        timer = threading.Timer(
+            REPLICATION_DELAY,
+            self.bandung.write,
+            args=(user_id, saldo_baru, version)
+        )
+        timer.start()
+        print(f"Replikasi ke Bandung akan tertunda {REPLICATION_DELAY} detik")
 
     def baca_saldo_naif(self, user_id: str, server: str) -> float:
         """Baca saldo TANPA mekanisme Read-Your-Writes - bisa saja stale."""
@@ -50,12 +53,19 @@ class ReplicationSystem:
         return replica.read(user_id)
 
     def baca_saldo_read_your_writes(self, user_id: str, server: str, versi_minimal: int) -> float:
-        """TODO 2: implementasikan Read-Your-Writes -
-        jika replika yang dituju versi datanya < versi_minimal (client pernah
-        melihat versi lebih baru sebelumnya), tunggu/redirect ke replika yang
-        sudah punya versi tersebut (di sini cukup simulasikan dengan polling
-        sampai versi replika >= versi_minimal, atau redirect ke Jakarta)."""
-        pass
+        replica = self.jakarta if server == "Jakarta" else self.bandung
+        versi_replica = replica.last_write_version.get(user_id, 0)
+
+        if versi_replica < versi_minimal:
+            print(f"[{replica.name}] Data belum terbaru (versi {versi_replica})")
+            print("[Read-Your-Writes] Mengalihkan pembacaan ke Jakarta")
+
+            replica = self.jakarta
+
+            if replica.last_write_version.get(user_id, 0) < versi_minimal:
+                raise RuntimeError("Tidak ada replika dengan versi yang dibutuhkan")
+
+        return replica.read(user_id)
 
 
 def main():
@@ -73,8 +83,12 @@ def main():
     print("\n=== Skenario dengan Read-Your-Writes ===")
     system.top_up(user_id, 20000)
     versi_terakhir = system.version_counter
-    # TODO 3: panggil baca_saldo_read_your_writes dan tunjukkan hasilnya SELALU benar
-    # walau dipanggil segera setelah top_up (< REPLICATION_DELAY detik).
+
+    saldo = system.baca_saldo_read_your_writes(
+        user_id, "Bandung", versi_terakhir
+    )
+    print("Baca saldo dengan Read-Your-Writes:", saldo)
+    print("-> Saldo terbaru 70000 berhasil dibaca (BUG TERATASI)")
 
 
 if __name__ == "__main__":
