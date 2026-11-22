@@ -59,6 +59,28 @@ aplikasi gateway dapat ditingkatkan kapasitasnya tanpa harus mengubah pengelolaa
 
 ### Kesimpulan - Soal Nomor 2
 
+```mermaid
+flowchart TB
+    M["Masyarakat"] -->|" Cek status "| Portal
+    I["Instansi / Bank / Kepolisian"] -->|" Verifikasi NIK / KYC "| Gateway
+
+    subgraph PaaS["PaaS - Layanan Aplikasi"]
+        Portal["Portal Publik<br/>(Contoh: Cek Bansos)"]
+        Gateway["API Gateway<br/>Autentikasi, Otorisasi, Rate Limiting"]
+    end
+
+    Portal -->|" Permintaan read-only via API "| Gateway
+
+    subgraph IaaS["IaaS - Infrastruktur Pemerintah"]
+        Service["Layanan Internal<br/>Validasi dan Verifikasi"]
+        Database[("Database Inti<br/>NIK, Nama, Alamat, Biometrik")]
+        Service -->|" Akses terkontrol "| Database
+    end
+
+    Gateway -->|" gRPC + mTLS "| Service
+    Service -->|" Hasil sesuai hak akses "| Gateway
+```
+
 IaaS digunakan untuk database inti karena data kependudukan membutuhkan kendali infrastruktur yang kuat dari pemerintah.
 Sementara itu, PaaS lebih cocok untuk portal publik dan API Gateway karena lebih mudah dikelola serta dapat menyesuaikan
 kapasitas ketika jumlah pengguna meningkat.

@@ -1,0 +1,19 @@
+flowchart TB
+    M["Masyarakat"] -->|" Cek status "| Portal
+    I["Instansi / Bank / Kepolisian"] -->|" Verifikasi NIK / KYC "| Gateway
+
+    subgraph PaaS["PaaS - Layanan Aplikasi"]
+        Portal["Portal Publik<br/>(Contoh: Cek Bansos)"]
+        Gateway["API Gateway<br/>Autentikasi, Otorisasi, Rate Limiting"]
+    end
+
+    Portal -->|" Permintaan read-only via API "| Gateway
+
+    subgraph IaaS["IaaS - Infrastruktur Pemerintah"]
+        Service["Layanan Internal<br/>Validasi dan Verifikasi"]
+        Database[("Database Inti<br/>NIK, Nama, Alamat, Biometrik")]
+        Service -->|" Akses terkontrol "| Database
+    end
+
+    Gateway -->|" gRPC + mTLS "| Service
+    Service -->|" Hasil sesuai hak akses "| Gateway
