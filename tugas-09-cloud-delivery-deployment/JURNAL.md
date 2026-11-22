@@ -3,7 +3,8 @@
 ## Diskusi deployment model, risiko, dan mitigasi - (22 November 2026 21.14 WIB)
 
 - Membandingkan Private Cloud murni dan Hybrid Cloud untuk Sistem Data Kependudukan.
-- Membahas keterbatasan rapid elasticity pada Private Cloud murni akibat kapasitas fisik dan proses pengadaan, serta risiko pemborosan jika kapasitas puncak selalu disediakan.
+- Membahas keterbatasan rapid elasticity pada Private Cloud murni akibat kapasitas fisik dan proses pengadaan, serta
+  risiko pemborosan jika kapasitas puncak selalu disediakan.
 - Membahas Hybrid Cloud sebagai alternatif dengan database inti tetap di infrastruktur pemerintah.
 - Menimbang rekomendasi Private Cloud berdasarkan karakteristik NIST serta kebutuhan kerahasiaan dan skalabilitas.
 - Mengidentifikasi risiko lonjakan permintaan, penyalahgunaan akses oleh instansi mitra, dan gangguan pusat data.
@@ -23,8 +24,10 @@
 
 ## Log Penggunaan AI (Level 2)
 
-> Wajib diisi sesuai kebijakan Level 2 di [`../RUBRIK-UMUM.md`](../RUBRIK-UMUM.md). Tulis "Tidak memakai AI" pada baris pertama jika memang tidak dipakai. Bagian ini hanya untuk mencatat penggunaan AI dalam brainstorming ide atau penyusunan kerangka, bukan untuk kode, analisis, atau teks akhir.
+> Wajib diisi sesuai kebijakan Level 2 di [`../RUBRIK-UMUM.md`](../RUBRIK-UMUM.md). Tulis "Tidak memakai AI" pada baris
+> pertama jika memang tidak dipakai. Hanya untuk brainstorming ide/outline — bukan untuk kode/analisis/teks akhir.
+>
 
-| Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran atau ide AI | Cara saran diolah menjadi tulisan atau kode sendiri |
-|---------|---------|-----------------------|-----------------------------|-----------------------------------------------------|
+| Tanggal          | Tool AI | Prompt yang diberikan                                                                                                                                                               | Ringkasan saran/ide AI                                                                                                                                                                 | Bagaimana diolah jadi tulisan/kode sendiri                                                                                                       |
+|------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
 | 23 November 2026 | ChatGPT | Ide apa yang dapat dipertimbangkan untuk deployment model, pemetaan service model, dan risiko sistem data kependudukan yang menyimpan data sensitif serta melayani banyak instansi? | Memberikan bahan brainstorming berupa pertimbangan kendali data dan skalabilitas, pemetaan awal IaaS dan PaaS, serta kemungkinan risiko kapasitas, hak akses, dan gangguan pusat data. | Kelompok menilai relevansi ide terhadap studi kasus, memilih pembahasan yang sesuai, lalu menyusun rekomendasi, alasan, dan mitigasinya sendiri. |
