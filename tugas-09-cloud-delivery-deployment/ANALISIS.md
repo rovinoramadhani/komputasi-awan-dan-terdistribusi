@@ -1,23 +1,59 @@
-# Tugas 7 (Pekan 7) - Konsistensi Data
+# Tugas 9 (Pekan 9) - Cloud Delivery & Deployment Model
 
 **Mata Kuliah:** Komputasi Awan dan Terdistribusi
 
-**Kelompok:** Kelompok 2
+**Kelompok:** Kelompok Belum Ditentukan / Baru
 
-| Nama                    | NIM          | Kontribusi                                                                                                                                                                                                                     |
-|-------------------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Rovino Ramadhani        | 103072400031 | Menyusun jawaban kelompok, menganalisis hasil simulasi, membuat sequence diagram, mengimplementasikan simulasi replikasi dan Read-Your-Writes, menyiapkan bukti pengujian, serta mengelola struktur dan integrasi dokumentasi. |
-| Galang Herjuno Mulya    | 103072430006 | Menganalisis permasalahan konsistensi saldo FoodGo, membandingkan Eventual dan Sequential Consistency, menjelaskan dampak bisnis keterlambatan replikasi, serta mengusulkan Read-Your-Writes.                                  |
-| Erastus Liubeta Septian | 103072400020 | Menganalisis pemilihan model konsistensi, mengkaji mekanisme Client-Centric Consistency, mengevaluasi hasil simulasi, serta memberikan contoh penerapan konsistensi pada aplikasi transportasi online.                         |
+| Nama                           | NIM          | Kontribusi                                                                                        |
+|--------------------------------|--------------|---------------------------------------------------------------------------------------------------|
+| Rovino Ramadhani               | 103072400031 | Menganalisis rekomendasi Service Model (IaaS/PaaS) untuk komponen sistem kependudukan (nomor 2).  |
+| Erastus Liubeta Septian        | 103072400020 | Membandingkan Hybrid Cloud dengan Private Cloud murni sebagai alternatif yang ditolak (nomor 4).  |
+| Assyifa Dwi Safitri            | 103072400064 | Mengidentifikasi risiko dan mitigasi penerapan Private Cloud untuk sistem kependudukan (nomor 3). |
+| Amirah Essary Yunsarah Sujuthi | 103072400077 | Menganalisis rekomendasi Deployment Model berdasarkan karakteristik NIST (nomor 1).               |
 
 ## Pembagian Tanggung Jawab
 
-1. **Rovino Ramadhani:** Implementasi simulasi, pengujian, dokumentasi teknis, jawaban kelompok, dan integrasi hasil
-   pekerjaan.
-2. **Galang Herjuno Mulya:** Analisis kebutuhan konsistensi data dan pengaruhnya terhadap operasional serta kepercayaan
-   pelanggan FoodGo.
-3. **Erastus Liubeta Septian:** Analisis pendekatan konsistensi, evaluasi hasil pengujian, dan pengembangan skenario
-   pembanding.
+1. Amirah Essary Yunsarah Sujuthi - Analisis Deployment Model dan karakteristik NIST (nomor 1).
+2. Rovino Ramadhani - Analisis Service Model untuk database inti, portal publik, dan API verifikasi (nomor 2).
+3. Assyifa Dwi Safitri - Analisis risiko dan mitigasi (nomor 3).
+4. Erastus Liubeta Septian - Perbandingan dengan alternatif yang ditolak serta skenario tandingan (nomor 4).
+
+## Jawaban Nomor 1 - Ditulis Oleh Amirah Essary Yunsarah Sujuthi
+
+## 1. Rekomendasi Deployment Model
+
+Deployment model yang direkomendasikan untuk Sistem Data Kependudukan adalah **Private Cloud**, yaitu model cloud computing yang infrastrukturnya digunakan secara khusus dan dikelola dalam kendali penuh pemerintah.
+
+Pemilihan Private Cloud didasarkan pada kebutuhan sistem yang menyimpan data pribadi bersifat sensitif, seperti nama, NIK, alamat, dan data biometrik. Data tersebut membutuhkan perlindungan ketat agar tidak diakses atau disalahgunakan oleh pihak yang tidak berwenang. Melalui Private Cloud, pemerintah dapat mengendalikan lokasi penyimpanan, pengelolaan server, keamanan jaringan, serta hak akses terhadap data kependudukan.
+
+Selain menjaga kerahasiaan, sistem juga harus mampu melayani ribuan instansi dengan jumlah akses yang tidak selalu sama. Oleh karena itu, Private Cloud perlu dilengkapi dengan pengelolaan sumber daya yang fleksibel, penambahan kapasitas server, dan pembagian beban (*load balancing*) agar layanan tetap tersedia ketika terjadi peningkatan akses.
+
+### Analisis Berdasarkan Karakteristik NIST SP 800-145
+
+Berdasarkan NIST SP 800-145, terdapat lima karakteristik utama cloud computing yang menjadi dasar pertimbangan dalam penerapan Private Cloud.
+
+**a. On-Demand Self-Service**
+Karakteristik ini memungkinkan administrator menyediakan sumber daya komputasi secara mandiri melalui sistem pengelolaan cloud. Pada Sistem Data Kependudukan, pemerintah dapat menambah kapasitas server, penyimpanan, atau layanan aplikasi sesuai kebutuhan tanpa harus melakukan konfigurasi manual setiap saat. Proses tersebut tetap dibatasi oleh kebijakan keamanan dan kewenangan administrator.
+
+**b. Broad Network Access**
+Layanan cloud dapat diakses melalui jaringan menggunakan berbagai perangkat yang mendukung. Dalam sistem ini, instansi seperti Dukcapil daerah, kepolisian, dan bank dapat mengakses layanan verifikasi sesuai kewenangannya. Akses dilakukan melalui jaringan yang aman dengan autentikasi dan pembatasan hak akses agar data kependudukan tidak dapat diakses secara bebas.
+
+**c. Resource Pooling**
+Sumber daya komputasi, seperti server, penyimpanan, dan jaringan, dikumpulkan untuk melayani banyak pengguna secara bersama. Pemerintah dapat mengalokasikan sumber daya kepada berbagai instansi berdasarkan kebutuhan masing-masing. Dengan demikian, penggunaan infrastruktur menjadi lebih efisien, sementara pemisahan akses tetap diterapkan untuk menjaga kerahasiaan data.
+
+**d. Rapid Elasticity**
+Karakteristik ini memungkinkan kapasitas komputasi ditambah atau dikurangi dengan cepat mengikuti kebutuhan sistem. Ketika terjadi lonjakan akses saat pemilu atau pendaftaran sekolah, kapasitas layanan dapat ditingkatkan untuk mengurangi risiko gangguan. Namun, kemampuan tersebut tetap bergantung pada sumber daya fisik yang tersedia sehingga pemerintah perlu menyiapkan kapasitas cadangan.
+
+**e. Measured Service**
+Penggunaan sumber daya cloud dapat dipantau dan diukur secara otomatis. Pemerintah dapat memantau penggunaan CPU, penyimpanan, jaringan, serta jumlah permintaan layanan dari setiap instansi. Hasil pemantauan digunakan untuk mengevaluasi kinerja, mengoptimalkan penggunaan sumber daya, dan merencanakan peningkatan kapasitas.
+
+### Kesesuaian dengan Kerahasiaan dan Skalabilitas
+Dari sisi **kerahasiaan**, Private Cloud memungkinkan pemerintah memiliki kendali langsung terhadap infrastruktur dan pengelolaan data kependudukan. Perlindungan dapat dilakukan melalui enkripsi, autentikasi, pembatasan hak akses, dan pemantauan aktivitas pengguna. Hal ini sesuai dengan persyaratan bahwa data sensitif harus berada dalam infrastruktur yang sepenuhnya dikendalikan negara.
+
+Dari sisi **skalabilitas**, Private Cloud mendukung penggunaan virtualisasi, penambahan kapasitas komputasi, dan *load balancing* untuk menangani permintaan dari ribuan instansi. Meskipun kemampuan peningkatan kapasitasnya bergantung pada infrastruktur yang tersedia, pemerintah dapat mengantisipasinya melalui perencanaan kapasitas, penyediaan server cadangan, dan pengelolaan beban layanan.
+
+### Kesimpulan
+**Private Cloud menjadi deployment model yang direkomendasikan** karena mampu memberikan kendali penuh terhadap penyimpanan dan pemrosesan data kependudukan sekaligus mendukung kebutuhan akses dari banyak instansi. Dengan perencanaan kapasitas dan penerapan keamanan yang tepat, Private Cloud dapat mendukung sistem yang aman, stabil, dan dapat dikembangkan sesuai kebutuhan pemerintah.
 ## Jawaban Nomor 2 - Ditulis Oleh Rovino Ramadhani
 
 Dalam sistem data kependudukan, tidak semua komponen harus menggunakan model layanan cloud yang sama. Ada bagian yang
@@ -108,6 +144,42 @@ kapasitas ketika jumlah pengguna meningkat.
 Hal terpenting dari rancangan ini adalah memastikan data sensitif tetap berada dalam kendali pemerintah. Portal maupun
 instansi eksternal tidak diberikan akses langsung ke database, tetapi harus melalui layanan penghubung dengan hak akses
 yang dibatasi.
+## Jawaban Nomor 3 - Ditulis oleh Assyifa Dwi Safitri
+
+### a. Risiko layanan verifikasi tidak mampu menampung lonjakan permintaan
+
+Pada puncak musim pemilu atau penerimaan sekolah, banyak instansi bisa mengirim permintaan dalam waktu hampir bersamaan. Karena Private Cloud bergantung pada kapasitas perangkat yang dimiliki pemerintah, penambahan instans aplikasi tidak akan membantu apabila CPU, memori, atau database sudah mencapai batas fisik. Akibatnya, permintaan menumpuk dan proses validasi identitas terlambat.
+
+#### Mitigasi:
+
+- Menyusun *Capacity Planning* berdasarkan perkiraan permintaan puncak dan menyediakan cadangan server serta kapasitas basis data.
+- Menggunakan *load balancer*, autoscaling internal, antrean pemrosesan, serta pembatasan laju permintaan (*rate limiting*) per instansi.
+- Menjalankan pengujian beban sebelum periode sibuk dan menetapkan prioritas layanan penting.
+
+### b. Risiko penyalahgunaan hak akses oleh pengguna dari instansi mitra
+
+Ribuan petugas dan sistem terhubung ke layanan kependudukan. Akun yang dicuri atau izin akses yang terlalu luas dapat digunakan untuk melakukan pencarian NIK massal, melihat data yang tidak terkait tugas, atau mengumpulkan identitas warga. Risiko ini tetap ada walaupun seluruh data ditempatkan dalam Private Cloud.
+
+#### Mitigasi:
+
+- Menggunakan autentikasi multifaktor untuk petugas, identitas aplikasi yang kuat untuk API, dan prinsip *least privilege* dengan RBAC/ABAC.
+- Mewajibkan otoritasi berdasarkan tujuan penggunaan, membatasi atribut dalam respons, serta menerapkan kuota pencarian per lembaga.
+- Menerapkan pemantauan anomali, audit aksese, dan prosedur pencabutan akun/token serta tidak menyimpan NIK lengkap pada log operasional.
+
+### c. Risiko gangguan pusat data pemerintah menyebabkan layanan nasional terhenti
+
+Jika pusat data utama mengalami gangguan listrik, jaringan, bencana, atau kegagalan penyimpanan, layanan verifikasi dari berbagai daerah bisa ikut terdampak. Konsentrasi infrastruktur di bawah satu operator memperbesar dampak apabila tidak ada rancangan pemulihan.
+
+#### Mitigasi:
+
+- Menyediakan pusat data cadangan pemerintah di lokasi geografis berbeda, dengan replikasi terenkripsi dan hak akses setara.
+- Menentukan target pemulihan (RTO/RPO), menyiapkan prosedur *failover*, dan menguji pemulihan secara berkala.
+- Memisahkan sistem cadangan dari hak akses operasional sehari-hari untuk mengurangi risiko kerusakan atau penghapusan serentak.
+
+### Kesimpulan - Soal Nomor 3
+
+Berdasarkan analisis risiko dan mitigasi, penggunaan Private Cloud pada Sistem Data Kependudukan memiliki beberapa tantangan, yaitu keterbatasan kapasitas saat terjadi lonjakan akses, penyalahgunaan hak akses oleh instansi, serta gangguan pada pusat data pemerintah. Risiko tersebut dapat diminimalkan melalui perencanaan kapasitas, penerapan *load balancing* dan *autoscaling*, pengaturan hak akses yang ketat, serta penyediaan pusat data cadangan. Dengan mitigasi yang tepat, Private Cloud dapat menjaga keamanan dan kerahasiaan data penduduk sekaligus mendukung ketersediaan layanan bagi ribuan instansi. Oleh karena itu, keberhasilan Private Cloud tidak hanya bergantung pada pemilihan model cloud, tetapi juga pada pengelolaan keamanan, kapasitas, dan keandalan infrastruktur secara berkelanjutan.
+
 ## Jawaban Nomor 4 - Ditulis Oleh Erastus Liubeta Septian
 
 ### Alternatif yang Ditolak: Private Cloud Murni
@@ -149,78 +221,6 @@ Argumen penolakan di atas tidak menyentuh aspek keamanan/kerahasiaan, karena mem
 #### Rekomendasi sebagai Perbandingan
 
 Model yang kami pilih, **Hybrid Cloud**, menyelesaikan ketegangan ini secara langsung: lapisan *API Gateway* dan *stateless verification service* yang melayani ribuan instansi eksternal berjalan di Public/Community Cloud yang elastis, sementara *Master Database* biometrik dan NIK tetap terkunci di Private Cloud pemerintah — tidak pernah berpindah ke infrastruktur eksternal, sehingga kedaulatan data tetap terjaga.
-
-## Jawaban Nomor 1 - Ditulis Oleh Amirah Essary Yunsarah Sujuthi
-
-## 1. Rekomendasi Deployment Model
-
-Deployment model yang direkomendasikan untuk Sistem Data Kependudukan adalah **Private Cloud**, yaitu model cloud computing yang infrastrukturnya digunakan secara khusus dan dikelola dalam kendali penuh pemerintah.
-
-Pemilihan Private Cloud didasarkan pada kebutuhan sistem yang menyimpan data pribadi bersifat sensitif, seperti nama, NIK, alamat, dan data biometrik. Data tersebut membutuhkan perlindungan ketat agar tidak diakses atau disalahgunakan oleh pihak yang tidak berwenang. Melalui Private Cloud, pemerintah dapat mengendalikan lokasi penyimpanan, pengelolaan server, keamanan jaringan, serta hak akses terhadap data kependudukan.
-
-Selain menjaga kerahasiaan, sistem juga harus mampu melayani ribuan instansi dengan jumlah akses yang tidak selalu sama. Oleh karena itu, Private Cloud perlu dilengkapi dengan pengelolaan sumber daya yang fleksibel, penambahan kapasitas server, dan pembagian beban (*load balancing*) agar layanan tetap tersedia ketika terjadi peningkatan akses.
-
-### Analisis Berdasarkan Karakteristik NIST SP 800-145
-
-Berdasarkan NIST SP 800-145, terdapat lima karakteristik utama cloud computing yang menjadi dasar pertimbangan dalam penerapan Private Cloud.
-
-**a. On-Demand Self-Service**
-Karakteristik ini memungkinkan administrator menyediakan sumber daya komputasi secara mandiri melalui sistem pengelolaan cloud. Pada Sistem Data Kependudukan, pemerintah dapat menambah kapasitas server, penyimpanan, atau layanan aplikasi sesuai kebutuhan tanpa harus melakukan konfigurasi manual setiap saat. Proses tersebut tetap dibatasi oleh kebijakan keamanan dan kewenangan administrator.
-
-**b. Broad Network Access**
-Layanan cloud dapat diakses melalui jaringan menggunakan berbagai perangkat yang mendukung. Dalam sistem ini, instansi seperti Dukcapil daerah, kepolisian, dan bank dapat mengakses layanan verifikasi sesuai kewenangannya. Akses dilakukan melalui jaringan yang aman dengan autentikasi dan pembatasan hak akses agar data kependudukan tidak dapat diakses secara bebas.
-
-**c. Resource Pooling**
-Sumber daya komputasi, seperti server, penyimpanan, dan jaringan, dikumpulkan untuk melayani banyak pengguna secara bersama. Pemerintah dapat mengalokasikan sumber daya kepada berbagai instansi berdasarkan kebutuhan masing-masing. Dengan demikian, penggunaan infrastruktur menjadi lebih efisien, sementara pemisahan akses tetap diterapkan untuk menjaga kerahasiaan data.
-
-**d. Rapid Elasticity**
-Karakteristik ini memungkinkan kapasitas komputasi ditambah atau dikurangi dengan cepat mengikuti kebutuhan sistem. Ketika terjadi lonjakan akses saat pemilu atau pendaftaran sekolah, kapasitas layanan dapat ditingkatkan untuk mengurangi risiko gangguan. Namun, kemampuan tersebut tetap bergantung pada sumber daya fisik yang tersedia sehingga pemerintah perlu menyiapkan kapasitas cadangan.
-
-**e. Measured Service**
-Penggunaan sumber daya cloud dapat dipantau dan diukur secara otomatis. Pemerintah dapat memantau penggunaan CPU, penyimpanan, jaringan, serta jumlah permintaan layanan dari setiap instansi. Hasil pemantauan digunakan untuk mengevaluasi kinerja, mengoptimalkan penggunaan sumber daya, dan merencanakan peningkatan kapasitas.
-
-### Kesesuaian dengan Kerahasiaan dan Skalabilitas
-Dari sisi **kerahasiaan**, Private Cloud memungkinkan pemerintah memiliki kendali langsung terhadap infrastruktur dan pengelolaan data kependudukan. Perlindungan dapat dilakukan melalui enkripsi, autentikasi, pembatasan hak akses, dan pemantauan aktivitas pengguna. Hal ini sesuai dengan persyaratan bahwa data sensitif harus berada dalam infrastruktur yang sepenuhnya dikendalikan negara.
-
-Dari sisi **skalabilitas**, Private Cloud mendukung penggunaan virtualisasi, penambahan kapasitas komputasi, dan *load balancing* untuk menangani permintaan dari ribuan instansi. Meskipun kemampuan peningkatan kapasitasnya bergantung pada infrastruktur yang tersedia, pemerintah dapat mengantisipasinya melalui perencanaan kapasitas, penyediaan server cadangan, dan pengelolaan beban layanan.
-
-### Kesimpulan
-**Private Cloud menjadi deployment model yang direkomendasikan** karena mampu memberikan kendali penuh terhadap penyimpanan dan pemrosesan data kependudukan sekaligus mendukung kebutuhan akses dari banyak instansi. Dengan perencanaan kapasitas dan penerapan keamanan yang tepat, Private Cloud dapat mendukung sistem yang aman, stabil, dan dapat dikembangkan sesuai kebutuhan pemerintah.
-## Jawaban Nomor 3 - Ditulis oleh Assyifa Dwi Safitri
-
-### a. Risiko layanan verifikasi tidak mampu menampung lonjakan permintaan
-
-Pada puncak musim pemilu atau penerimaan sekolah, banyak instansi bisa mengirim permintaan dalam waktu hampir bersamaan. Karena Private Cloud bergantung pada kapasitas perangkat yang dimiliki pemerintah, penambahan instans aplikasi tidak akan membantu apabila CPU, memori, atau database sudah mencapai batas fisik. Akibatnya, permintaan menumpuk dan proses validasi identitas terlambat.
-
-#### Mitigasi:
-
-- Menyusun *Capacity Planning* berdasarkan perkiraan permintaan puncak dan menyediakan cadangan server serta kapasitas basis data.
-- Menggunakan *load balancer*, autoscaling internal, antrean pemrosesan, serta pembatasan laju permintaan (*rate limiting*) per instansi.
-- Menjalankan pengujian beban sebelum periode sibuk dan menetapkan prioritas layanan penting.
-
-### b. Risiko penyalahgunaan hak akses oleh pengguna dari instansi mitra
-
-Ribuan petugas dan sistem terhubung ke layanan kependudukan. Akun yang dicuri atau izin akses yang terlalu luas dapat digunakan untuk melakukan pencarian NIK massal, melihat data yang tidak terkait tugas, atau mengumpulkan identitas warga. Risiko ini tetap ada walaupun seluruh data ditempatkan dalam Private Cloud.
-
-#### Mitigasi:
-
-- Menggunakan autentikasi multifaktor untuk petugas, identitas aplikasi yang kuat untuk API, dan prinsip *least privilege* dengan RBAC/ABAC.
-- Mewajibkan otoritasi berdasarkan tujuan penggunaan, membatasi atribut dalam respons, serta menerapkan kuota pencarian per lembaga.
-- Menerapkan pemantauan anomali, audit aksese, dan prosedur pencabutan akun/token serta tidak menyimpan NIK lengkap pada log operasional.
-
-### c. Risiko gangguan pusat data pemerintah menyebabkan layanan nasional terhenti
-
-Jika pusat data utama mengalami gangguan listrik, jaringan, bencana, atau kegagalan penyimpanan, layanan verifikasi dari berbagai daerah bisa ikut terdampak. Konsentrasi infrastruktur di bawah satu operator memperbesar dampak apabila tidak ada rancangan pemulihan.
-
-#### Mitigasi:
-
-- Menyediakan pusat data cadangan pemerintah di lokasi geografis berbeda, dengan replikasi terenkripsi dan hak akses setara.
-- Menentukan target pemulihan (RTO/RPO), menyiapkan prosedur *failover*, dan menguji pemulihan secara berkala.
-- Memisahkan sistem cadangan dari hak akses operasional sehari-hari untuk mengurangi risiko kerusakan atau penghapusan serentak.
-
-### Kesimpulan - Soal Nomor 3
-
-Berdasarkan analisis risiko dan mitigasi, penggunaan Private Cloud pada Sistem Data Kependudukan memiliki beberapa tantangan, yaitu keterbatasan kapasitas saat terjadi lonjakan akses, penyalahgunaan hak akses oleh instansi, serta gangguan pada pusat data pemerintah. Risiko tersebut dapat diminimalkan melalui perencanaan kapasitas, penerapan *load balancing* dan *autoscaling*, pengaturan hak akses yang ketat, serta penyediaan pusat data cadangan. Dengan mitigasi yang tepat, Private Cloud dapat menjaga keamanan dan kerahasiaan data penduduk sekaligus mendukung ketersediaan layanan bagi ribuan instansi. Oleh karena itu, keberhasilan Private Cloud tidak hanya bergantung pada pemilihan model cloud, tetapi juga pada pengelolaan keamanan, kapasitas, dan keandalan infrastruktur secara berkelanjutan.
 
 ## Kesimpulan Kelompok
 
